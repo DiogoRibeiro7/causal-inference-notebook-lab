@@ -39,6 +39,10 @@ def _validate_common_inputs(
         or n_bootstrap_samples <= 0
     ):
         raise ValueError("n_bootstrap_samples must be a positive integer.")
+    if isinstance(confidence_level, bool) or not isinstance(confidence_level, (int, float)):
+        raise TypeError("confidence_level must be a numeric value.")
+    if not np.isfinite(confidence_level):
+        raise ValueError("confidence_level must be a numeric value.")
     if not (0.0 < confidence_level < 1.0):
         raise ValueError("confidence_level must be strictly between 0 and 1.")
 

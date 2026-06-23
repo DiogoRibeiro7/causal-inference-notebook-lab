@@ -61,6 +61,30 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             confidence_level=1.1,
         )
 
+    with pytest.raises(TypeError, match="confidence_level must be a numeric value"):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+            n_bootstrap_samples=10,
+            confidence_level=True,
+        )
+
+    with pytest.raises(TypeError, match="confidence_level must be a numeric value"):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+            n_bootstrap_samples=10,
+            confidence_level="0.95",  # type: ignore[arg-type]
+        )
+
+    with pytest.raises(ValueError, match="confidence_level must be a numeric value"):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+            n_bootstrap_samples=10,
+            confidence_level=float("inf"),
+        )
+
     with pytest.raises(
         TypeError,
         match="covariates must be a sequence of column names, not a string",
@@ -117,4 +141,20 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
             seed=True,
             n_bootstrap_samples=10,
+        )
+
+    class BadFiniteEstimatorResult:
+        def __init__(self) -> None:
+            self.estimate = float("nan")
+
+    def bad_finite_estimator(_: object) -> BadFiniteEstimatorResult:
+        return BadFiniteEstimatorResult()
+
+    with pytest.raises(ValueError, match="estimator `estimate` must be finite"):
+        bootstrap_ate(
+            dataset.data,
+            bad_finite_estimator,
+            n_bootstrap_samples=3,
+            seed=1,
+            confidence_level=0.95,
         )
