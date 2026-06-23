@@ -16,6 +16,9 @@ def test_data_generators_validate_positive_integer_parameters() -> None:
     with pytest.raises(TypeError, match="seed must be an integer."):
         generators.make_iv_data(seed="7")  # type: ignore[arg-type]
 
+    iv_dataset = generators.make_iv_data(n=np.int64(10), seed=np.int64(12))
+    assert len(iv_dataset.data) == 10
+
     dataset = generators.make_heterogeneous_treatment_data(n=np.int64(10), seed=np.int64(22))
     assert len(dataset.data) == 10
 
@@ -26,6 +29,9 @@ def test_data_generators_validate_did_inputs() -> None:
 
     with pytest.raises(ValueError, match="n_periods must be at least 4"):
         generators.make_did_panel(n_units=20, n_periods=3)
+
+    did_dataset = generators.make_did_panel(n_units=np.int64(20), n_periods=np.int64(6), seed=np.int64(13))
+    assert did_dataset.data["time"].max() == 5
 
 
 def test_data_generators_validate_synthetic_control_inputs() -> None:
