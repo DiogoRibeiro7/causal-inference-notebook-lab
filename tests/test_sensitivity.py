@@ -51,6 +51,14 @@ def test_placebo_treatment_test_validates_inputs() -> None:
             seed=1.5,
         )
 
+    placebo_result = placebo_treatment_test(
+        data=data,
+        estimator=ipw_ate,
+        covariates=["x1", "x2", "x3"],
+        seed=np.int64(8),
+    )
+    assert np.isfinite(placebo_result.estimate)
+
 
 def test_placebo_treatment_test_rejects_missing_treatment_or_invalid_treatment_data() -> None:
     dataset = make_confounded_binary_treatment(n=200, seed=7)
@@ -134,6 +142,14 @@ def test_omitted_confounder_simulation_input_validation() -> None:
             confounder_strength_grid=[0.0],
             seed=0.5,
         )
+
+    simulation = omitted_confounder_simulation(
+        data=data,
+        base_effect=dataset.true_ate,
+        confounder_strength_grid=[0.0],
+        seed=np.int64(3),
+    )
+    assert not simulation.empty
 
 
 def test_omitted_confounder_simulation_rejects_no_treatment_variation() -> None:

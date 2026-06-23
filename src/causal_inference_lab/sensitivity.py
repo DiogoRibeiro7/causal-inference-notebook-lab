@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from numbers import Real
+from numbers import Integral, Real
 from dataclasses import dataclass
 from typing import Any
 
@@ -76,7 +76,7 @@ def _validate_treatment_col(data: pd.DataFrame, treatment_col: str) -> np.ndarra
 def _validate_seed(seed: int) -> None:
     """Validate RNG seed value."""
 
-    if isinstance(seed, bool) or not isinstance(seed, int):
+    if isinstance(seed, bool) or not isinstance(seed, Integral):
         raise TypeError("seed must be an integer.")
 
 
