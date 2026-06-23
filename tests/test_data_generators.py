@@ -42,7 +42,13 @@ def test_data_generators_validate_synthetic_control_inputs() -> None:
     with pytest.raises(TypeError, match="treated_unit must be an integer."):
         generators.make_synthetic_control_data(treated_unit=True)  # type: ignore[arg-type]
 
-    synthetic = generators.make_synthetic_control_data(n_units=10, treated_unit=np.int64(3), seed=np.int64(5))
+    synthetic = generators.make_synthetic_control_data(
+        n_units=np.int64(10),
+        n_periods=np.int64(12),
+        pre_periods=np.int64(4),
+        treated_unit=np.int64(3),
+        seed=np.int64(5),
+    )
     assert synthetic.data["treated_unit"].sum() == 1
 
     with pytest.raises(ValueError, match="treated_unit must be between 0 and n_units - 1."):
