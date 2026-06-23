@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from causal_inference_lab.data_generators import make_iv_data
 from causal_inference_lab.estimators import ols_treatment_effect
@@ -42,3 +43,25 @@ def test_instrumental_variables_rejects_constant_instrument() -> None:
         assert "Instrument must vary" in str(exc)
     else:
         raise AssertionError("Expected ValueError for constant instrument.")
+
+
+def test_instrumental_variables_rejects_invalid_inputs() -> None:
+    dataset = make_iv_data(n=300, seed=20)
+    data = dataset.data
+
+    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
+        instrumental_variables_ate(data, covariates="x")
+
+    with pytest.raises(ValueError, match="covariates must be unique."):
+        instrumental_variables_ate(data, covariates=["x", "x"])
+
+    bad_treatment = data.copy()
+    bad_treatment.loc[bad_treatment.index[:1], "treatment"] = 2
+    with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):
+        instrumental_variables_ate(bad_treatment)
+
+    with pytest.raises(TypeError, match="treatment_col must be a string."):
+        instrumental_variables_ate(data, treatment_col=1)  # type: ignore[arg-type]
+
+    with pytest.raises(ValueError, match="treatment_col and instrument_col must be different."):
+        instrumental_variables_ate(data, treatment_col="instrument", instrument_col="instrument")
