@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from numbers import Real
 from typing import Sequence
 
 import numpy as np
@@ -128,13 +129,24 @@ def rdd_bandwidth_sensitivity(
 ) -> pd.DataFrame:
     """Evaluate local linear estimates across a bandwidth grid."""
 
-    if not bandwidth_grid:
+    try:
+        bandwidth_list = list(bandwidth_grid)
+    except TypeError as exc:
+        raise TypeError("bandwidth_grid must be a sequence of numeric bandwidths.") from exc
+
+    if len(bandwidth_list) == 0:
         raise ValueError("bandwidth_grid must not be empty.")
-    if any(float(bw) <= 0 for bw in bandwidth_grid):
+    if any(isinstance(bandwidth, bool) or not isinstance(bandwidth, Real) for bandwidth in bandwidth_list):
+        raise TypeError("bandwidth_grid must be a sequence of numeric bandwidths.")
+
+    bandwidths = [float(bandwidth) for bandwidth in bandwidth_list]
+    if not all(np.isfinite(bandwidths)):
+        raise ValueError("all bandwidths must be finite positive values.")
+    if any(bandwidth <= 0 for bandwidth in bandwidths):
         raise ValueError("all bandwidths must be positive.")
 
     rows = []
-    for bandwidth in bandwidth_grid:
+    for bandwidth in bandwidths:
         result = local_linear_rdd(
             data=data,
             running_col=running_col,

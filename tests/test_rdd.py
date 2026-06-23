@@ -64,3 +64,15 @@ def test_local_linear_rdd_input_validation() -> None:
 
     with pytest.raises(ValueError, match="bandwidth must be positive."):
         local_linear_rdd(make_sharp_rdd_data(n=50, seed=3).data, bandwidth=-1.0)
+
+    with pytest.raises(TypeError, match="bandwidth_grid must be a sequence of numeric bandwidths."):
+        rdd_bandwidth_sensitivity(make_sharp_rdd_data(n=100, seed=4).data, bandwidth_grid="bad-grid")
+
+    with pytest.raises(TypeError, match="bandwidth_grid must be a sequence of numeric bandwidths."):
+        rdd_bandwidth_sensitivity(make_sharp_rdd_data(n=100, seed=5).data, bandwidth_grid=[1.0, True])
+
+    with pytest.raises(ValueError, match="all bandwidths must be finite positive values."):
+        rdd_bandwidth_sensitivity(
+            make_sharp_rdd_data(n=100, seed=6).data,
+            bandwidth_grid=[1.0, float("inf")],
+        )
