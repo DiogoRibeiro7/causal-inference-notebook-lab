@@ -145,11 +145,19 @@ def test_omitted_confounder_simulation_input_validation() -> None:
 
     simulation = omitted_confounder_simulation(
         data=data,
-        base_effect=dataset.true_ate,
+        base_effect=np.float64(dataset.true_ate),
         confounder_strength_grid=[0.0],
         seed=np.int64(3),
     )
     assert not simulation.empty
+
+    numpy_simulation = omitted_confounder_simulation(
+        data=data,
+        base_effect=np.float64(dataset.true_ate),
+        confounder_strength_grid=[np.float64(0.0), np.float64(0.1)],
+        seed=np.int64(7),
+    )
+    assert numpy_simulation.shape[0] == 2
 
 
 def test_omitted_confounder_simulation_rejects_no_treatment_variation() -> None:
