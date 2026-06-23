@@ -18,14 +18,65 @@ def _validate_data_inputs(
     covariates: Sequence[str],
     treatment_col: str,
     outcome_col: str,
-) -> None:
-    missing = [column for column in [treatment_col, outcome_col, *covariates] if column not in data.columns]
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError("data must be a pandas DataFrame.")
+    if data.empty:
+        raise ValueError("data must not be empty.")
+
+    if not isinstance(treatment_col, str):
+        raise TypeError("treatment_col must be a string.")
+    if not isinstance(outcome_col, str):
+        raise TypeError("outcome_col must be a string.")
+    if treatment_col == outcome_col:
+        raise ValueError("treatment_col and outcome_col must be different.")
+
+    if isinstance(covariates, str):
+        raise TypeError("covariates must be a sequence of column names, not a string.")
+    try:
+        covariate_list = list(covariates)
+    except TypeError as exc:
+        raise TypeError("covariates must be a sequence of column names.") from exc
+
+    if not covariate_list:
+        raise ValueError("covariates must not be empty.")
+    if len(set(covariate_list)) != len(covariate_list):
+        raise ValueError("covariates must be unique.")
+
+    missing = [column for column in [treatment_col, outcome_col, *covariate_list] if column not in data.columns]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
     treatment_values = set(data[treatment_col].dropna().unique().tolist())
     if not treatment_values.issubset({0, 1}):
         raise ValueError("treatment must be binary and encoded as 0/1.")
+    if not np.all(np.isin(list(treatment_values), [0, 1])):
+        raise ValueError("treatment must be binary and encoded as 0/1.")
+
+    try:
+        x = data.loc[:, covariate_list].to_numpy(dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("covariates must be numeric and finite.") from exc
+    if not np.all(np.isfinite(x)):
+        raise ValueError("covariates must not contain NaN or infinite values.")
+
+    try:
+        y = data[outcome_col].astype(float).to_numpy(dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("outcome must be numeric and finite.") from exc
+    if not np.isfinite(y).all():
+        raise ValueError("outcome must not contain NaN or infinite values.")
+
+    t = data[treatment_col].astype(float).to_numpy(dtype=float)
+    if not np.all(np.isfinite(t)):
+        raise ValueError("treatment must not contain NaN or infinite values.")
+    if np.any(np.isin(t, [0, 1], invert=True)):
+        raise ValueError("treatment must be binary and encoded as 0/1.")
+
+    if not np.any(t == 1) or not np.any(t == 0):
+        raise ValueError("Both treated and control groups are required.")
+
+    return x, t, y
 
 
 def double_machine_learning_ate(
@@ -57,13 +108,18 @@ def double_machine_learning_ate(
         EffectEstimate with the DML ATE estimate.
     """
 
-    _validate_data_inputs(data, covariates, treatment_col, outcome_col)
+    x, treatment, outcome = _validate_data_inputs(
+        data,
+        covariates,
+        treatment_col=treatment_col,
+        outcome_col=outcome_col,
+    )
     if not isinstance(n_splits, int) or n_splits < 2:
         raise ValueError("n_splits must be an integer >= 2.")
-
-    x = data.loc[:, list(covariates)].to_numpy(dtype=float)
-    d = data[treatment_col].to_numpy(dtype=float)
-    y = data[outcome_col].to_numpy(dtype=float)
+    if n_splits > len(data):
+        raise ValueError("n_splits cannot exceed the number of observations.")
+    if not isinstance(seed, int) or isinstance(seed, bool):
+        raise ValueError("seed must be an integer.")
 
     outcome_base = outcome_model or LinearRegression()
     treatment_base = treatment_model or LogisticRegression(max_iter=1_000)
@@ -75,9 +131,9 @@ def double_machine_learning_ate(
     for train_idx, test_idx in folds.split(x):
         x_train = x[train_idx]
         y_train = y[train_idx]
-        d_train = d[train_idx]
+        d_train = treatment[train_idx]
         x_test = x[test_idx]
-        d_test = d[test_idx]
+        d_test = treatment[test_idx]
         y_test = y[test_idx]
 
         outcome_fold = clone(outcome_base)
