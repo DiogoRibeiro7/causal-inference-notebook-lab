@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from causal_inference_lab.data_generators import make_confounded_binary_treatment
 from causal_inference_lab.diagnostics import (
@@ -10,8 +11,10 @@ from causal_inference_lab.diagnostics import (
     standardized_mean_difference,
 )
 from causal_inference_lab.estimators import (
+    estimate_propensity_scores,
     aipw_ate,
     difference_in_means,
+    fit_propensity_model,
     g_computation_ate,
     ipw_ate,
 )
@@ -120,3 +123,33 @@ def test_omitted_confounder_simulation_validates_input_grid() -> None:
         assert str(err) == "confounder_strength_grid values must be non-negative."
     else:
         raise AssertionError("Expected ValueError for negative strength.")
+
+
+def test_estimators_raises_for_invalid_treatment_and_outcome_inputs() -> None:
+    dataset = make_confounded_binary_treatment(n=300, seed=7)
+    data = dataset.data.copy()
+
+    data.loc[data.index[:1], "treatment"] = 2
+    with pytest.raises(ValueError, match="Treatment must be binary and encoded as 0/1."):
+        difference_in_means(data, "treatment", "outcome")
+
+    data.loc[data.index[0], "outcome"] = np.nan
+    with pytest.raises(ValueError, match="outcome must be numeric and finite."):
+        ipw_ate(data, ["x1", "x2", "x3"], outcome_col="outcome")
+
+    with pytest.raises(TypeError, match="data must be a pandas DataFrame."):
+        ipw_ate("not-a-dataframe", ["x1", "x2", "x3"])  # type: ignore[arg-type]
+
+
+def test_estimator_helpers_validate_numeric_parameters() -> None:
+    dataset = make_confounded_binary_treatment(n=200, seed=9)
+    data = dataset.data
+
+    with pytest.raises(TypeError, match="clip must be a numeric value."):
+        ipw_ate(data, ["x1", "x2", "x3"], clip="0.01")  # type: ignore[arg-type]
+
+    with pytest.raises(ValueError, match="clip must be between 0 and 0.5."):
+        estimate_propensity_scores(data, ["x1", "x2", "x3"], clip=1.0)
+
+    with pytest.raises(ValueError, match="columns must be a sequence of column names, not a string."):
+        fit_propensity_model(data, covariates="x1")  # type: ignore[arg-type]
