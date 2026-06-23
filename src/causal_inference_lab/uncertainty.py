@@ -40,7 +40,7 @@ def _validate_common_inputs(
         or n_bootstrap_samples <= 0
     ):
         raise ValueError("n_bootstrap_samples must be a positive integer.")
-    if isinstance(confidence_level, bool) or not isinstance(confidence_level, (int, float)):
+    if isinstance(confidence_level, bool) or not isinstance(confidence_level, numbers.Real):
         raise TypeError("confidence_level must be a numeric value.")
     if not np.isfinite(confidence_level):
         raise ValueError("confidence_level must be a numeric value.")

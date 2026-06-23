@@ -148,6 +148,9 @@ def test_estimator_helpers_validate_numeric_parameters() -> None:
     with pytest.raises(TypeError, match="clip must be a numeric value."):
         ipw_ate(data, ["x1", "x2", "x3"], clip="0.01")  # type: ignore[arg-type]
 
+    result = ipw_ate(data, ["x1", "x2", "x3"], clip=np.float64(0.02))
+    assert np.isfinite(result.estimate)
+
     with pytest.raises(ValueError, match="clip must be between 0 and 0.5."):
         estimate_propensity_scores(data, ["x1", "x2", "x3"], clip=1.0)
 

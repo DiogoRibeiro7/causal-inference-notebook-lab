@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from numbers import Real
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -154,7 +155,7 @@ def estimate_propensity_scores(
         Array of clipped propensity scores.
     """
 
-    if isinstance(clip, bool) or not isinstance(clip, (int, float)):
+    if isinstance(clip, bool) or not isinstance(clip, Real):
         raise TypeError("clip must be a numeric value.")
     if not 0.0 < float(clip) < 0.5:
         raise ValueError("clip must be between 0 and 0.5.")

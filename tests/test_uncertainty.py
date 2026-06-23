@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from causal_inference_lab.data_generators import make_confounded_binary_treatment
@@ -84,6 +85,14 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             n_bootstrap_samples=10,
             confidence_level=float("inf"),
         )
+
+    result = bootstrap_ate(
+        dataset.data,
+        lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+        n_bootstrap_samples=10,
+        confidence_level=np.float64(0.95),
+    )
+    assert np.isfinite(result.estimate)
 
     with pytest.raises(
         TypeError,
