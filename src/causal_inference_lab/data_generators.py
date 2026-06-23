@@ -37,10 +37,37 @@ def _sigmoid(x: np.ndarray) -> np.ndarray:
 def _validate_positive_int(value: int, name: str) -> None:
     """Validate that an integer parameter is strictly positive."""
 
-    if not isinstance(value, int):
+    if isinstance(value, bool) or not isinstance(value, int):
         raise TypeError(f"{name} must be an integer.")
     if value <= 0:
         raise ValueError(f"{name} must be positive.")
+
+
+def _validate_seed(seed: int) -> None:
+    """Validate RNG seed type."""
+
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise TypeError("seed must be an integer.")
+
+
+def _validate_treated_unit(treated_unit: int, n_units: int) -> None:
+    """Validate treated unit id for synthetic control data."""
+
+    if isinstance(treated_unit, bool) or not isinstance(treated_unit, int):
+        raise TypeError("treated_unit must be an integer.")
+    if treated_unit < 0:
+        raise ValueError("treated_unit must be between 0 and n_units - 1.")
+    if treated_unit >= n_units:
+        raise ValueError("treated_unit must be between 0 and n_units - 1.")
+
+
+def _validate_cutoff(cutoff: float) -> None:
+    """Validate RDD cutoff scalar."""
+
+    if isinstance(cutoff, bool) or not isinstance(cutoff, int | float):
+        raise TypeError("cutoff must be a finite real number.")
+    if not np.isfinite(cutoff):
+        raise ValueError("cutoff must be finite.")
 
 
 def make_confounded_binary_treatment(n: int = 5_000, seed: int = 42) -> SyntheticDataset:
@@ -58,6 +85,7 @@ def make_confounded_binary_treatment(n: int = 5_000, seed: int = 42) -> Syntheti
     """
 
     _validate_positive_int(n, "n")
+    _validate_seed(seed)
     rng = np.random.default_rng(seed)
 
     x1 = rng.normal(0.0, 1.0, n)
@@ -103,6 +131,7 @@ def make_heterogeneous_treatment_data(n: int = 5_000, seed: int = 123) -> Synthe
     """
 
     _validate_positive_int(n, "n")
+    _validate_seed(seed)
     rng = np.random.default_rng(seed)
 
     age = rng.normal(50.0, 12.0, n)
@@ -153,6 +182,7 @@ def make_did_panel(n_units: int = 600, n_periods: int = 8, seed: int = 7) -> Syn
 
     _validate_positive_int(n_units, "n_units")
     _validate_positive_int(n_periods, "n_periods")
+    _validate_seed(seed)
     if n_periods < 4:
         raise ValueError("n_periods must be at least 4 for a useful DiD example.")
 
@@ -210,6 +240,7 @@ def make_iv_data(n: int = 5_000, seed: int = 99) -> SyntheticDataset:
     """
 
     _validate_positive_int(n, "n")
+    _validate_seed(seed)
     rng = np.random.default_rng(seed)
 
     u = rng.normal(0.0, 1.0, n)
@@ -256,8 +287,8 @@ def make_sharp_rdd_data(n: int = 5_000, cutoff: float = 0.0, seed: int = 21) -> 
     """
 
     _validate_positive_int(n, "n")
-    if not np.isfinite(cutoff):
-        raise ValueError("cutoff must be finite.")
+    _validate_seed(seed)
+    _validate_cutoff(cutoff)
 
     rng = np.random.default_rng(seed)
     running = rng.uniform(-3.0, 3.0, n)
@@ -294,6 +325,8 @@ def make_synthetic_control_data(
     _validate_positive_int(n_units, "n_units")
     _validate_positive_int(n_periods, "n_periods")
     _validate_positive_int(pre_periods, "pre_periods")
+    _validate_seed(seed)
+    _validate_treated_unit(treated_unit, n_units=n_units)
     if pre_periods >= n_periods:
         raise ValueError("pre_periods must be less than n_periods.")
 
