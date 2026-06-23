@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import numpy as np
 import pytest
 
 from causal_inference_lab.data_generators import make_confounded_binary_treatment
@@ -29,7 +28,10 @@ def test_bootstrap_ate_is_deterministic_and_returns_bounds() -> None:
     )
 
     assert first == second
-    assert 0.0 <= first.lower <= first.estimate <= first.upper <= first.estimate + abs(first.estimate) + 1.0
+    assert (
+        0.0 <= first.lower <= first.estimate <= first.upper
+        <= first.estimate + abs(first.estimate) + 1.0
+    )
     assert first.n_observations == len(data)
     assert first.n_bootstrap_samples == 80
 
@@ -38,7 +40,11 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
     dataset = make_confounded_binary_treatment(n=100, seed=55)
 
     with pytest.raises(ValueError, match="n_bootstrap_samples must be a positive integer"):
-        bootstrap_ate(dataset.data, lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]), n_bootstrap_samples=0)
+        bootstrap_ate(
+            dataset.data,
+            lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+            n_bootstrap_samples=0,
+        )
 
     with pytest.raises(ValueError, match="n_bootstrap_samples must be at least 2"):
         bootstrap_ate(
@@ -55,7 +61,10 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             confidence_level=1.1,
         )
 
-    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string"):
+    with pytest.raises(
+        TypeError,
+        match="covariates must be a sequence of column names, not a string",
+    ):
         bootstrap_ate(
             dataset.data,
             lambda frame, _covariates: aipw_ate(frame, ["x1", "x2", "x3"]),
@@ -71,11 +80,18 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             n_bootstrap_samples=10,
         )
 
+    with pytest.raises(TypeError, match="estimator must be callable."):
+        bootstrap_ate(
+            dataset.data,
+            estimator="not-callable",  # type: ignore[arg-type]
+            n_bootstrap_samples=10,
+        )
+
     class BadEstimatorResult:
         def __init__(self) -> None:
             self.estimate = "bad-value"
 
-    def bad_estimator(_: pd.DataFrame) -> BadEstimatorResult:
+    def bad_estimator(_: object) -> BadEstimatorResult:
         return BadEstimatorResult()
 
     with pytest.raises(TypeError, match="estimator `estimate` must be numeric"):
@@ -85,4 +101,20 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             n_bootstrap_samples=3,
             seed=0,
             confidence_level=0.95,
+        )
+
+    with pytest.raises(TypeError, match="seed must be an integer."):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+            seed=1.5,
+            n_bootstrap_samples=10,
+        )
+
+    with pytest.raises(TypeError, match="seed must be an integer."):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+            seed=True,
+            n_bootstrap_samples=10,
         )

@@ -30,10 +30,14 @@ def _validate_common_inputs(
     confidence_level: float,
 ) -> None:
     if not isinstance(data, pd.DataFrame):
-        raise ValueError("data must be a pandas DataFrame.")
+        raise TypeError("data must be a pandas DataFrame.")
     if data.empty:
         raise ValueError("data must not be empty.")
-    if not isinstance(n_bootstrap_samples, int) or n_bootstrap_samples <= 0:
+    if (
+        isinstance(n_bootstrap_samples, bool)
+        or not isinstance(n_bootstrap_samples, int)
+        or n_bootstrap_samples <= 0
+    ):
         raise ValueError("n_bootstrap_samples must be a positive integer.")
     if not (0.0 < confidence_level < 1.0):
         raise ValueError("confidence_level must be strictly between 0 and 1.")
@@ -62,6 +66,25 @@ def _validate_covariates(covariates: Sequence[str]) -> list[str]:
     return covariate_list
 
 
+def _validate_seed(seed: int) -> None:
+    """Validate random seed."""
+
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise TypeError("seed must be an integer.")
+
+
+def _validate_estimator(
+    estimator: (
+        Callable[[pd.DataFrame], EffectEstimate]
+        | Callable[[pd.DataFrame, Sequence[str]], EffectEstimate]
+    ),
+) -> None:
+    """Validate estimator is callable before resampling."""
+
+    if not callable(estimator):
+        raise TypeError("estimator must be callable.")
+
+
 def _extract_estimate(estimator_output: object) -> float:
     """Return the scalar estimate from a causal estimator output."""
 
@@ -86,7 +109,10 @@ def _extract_estimate(estimator_output: object) -> float:
 
 def bootstrap_ate(
     data: pd.DataFrame,
-    estimator: Callable[[pd.DataFrame], EffectEstimate] | Callable[[pd.DataFrame, Sequence[str]], EffectEstimate],
+    estimator: (
+        Callable[[pd.DataFrame], EffectEstimate]
+        | Callable[[pd.DataFrame, Sequence[str]], EffectEstimate]
+    ),
     n_bootstrap_samples: int = 1_000,
     seed: int = 123,
     confidence_level: float = 0.95,
@@ -109,6 +135,8 @@ def bootstrap_ate(
     """
 
     _validate_common_inputs(data, n_bootstrap_samples, confidence_level)
+    _validate_seed(seed)
+    _validate_estimator(estimator)
     if n_bootstrap_samples < 2:
         raise ValueError("n_bootstrap_samples must be at least 2 to estimate a standard error.")
     if covariates is not None:
