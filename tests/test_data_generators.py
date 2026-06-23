@@ -16,6 +16,9 @@ def test_data_generators_validate_positive_integer_parameters() -> None:
     with pytest.raises(TypeError, match="seed must be an integer."):
         generators.make_iv_data(seed="7")  # type: ignore[arg-type]
 
+    dataset = generators.make_heterogeneous_treatment_data(n=np.int64(10), seed=np.int64(22))
+    assert len(dataset.data) == 10
+
 
 def test_data_generators_validate_did_inputs() -> None:
     with pytest.raises(TypeError, match="n_units must be an integer."):
@@ -28,6 +31,9 @@ def test_data_generators_validate_did_inputs() -> None:
 def test_data_generators_validate_synthetic_control_inputs() -> None:
     with pytest.raises(TypeError, match="treated_unit must be an integer."):
         generators.make_synthetic_control_data(treated_unit=True)  # type: ignore[arg-type]
+
+    synthetic = generators.make_synthetic_control_data(n_units=10, treated_unit=np.int64(3), seed=np.int64(5))
+    assert synthetic.data["treated_unit"].sum() == 1
 
     with pytest.raises(ValueError, match="treated_unit must be between 0 and n_units - 1."):
         generators.make_synthetic_control_data(n_units=10, treated_unit=10)
@@ -42,4 +48,3 @@ def test_data_generators_validate_rdd_inputs() -> None:
 
     with pytest.raises(ValueError, match="cutoff must be finite."):
         generators.make_sharp_rdd_data(cutoff=np.inf)
-

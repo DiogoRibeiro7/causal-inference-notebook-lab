@@ -6,6 +6,7 @@ effect is known. This allows us to test whether an estimator is behaving as expe
 
 from __future__ import annotations
 
+import numbers
 from dataclasses import dataclass
 from typing import Final
 
@@ -37,7 +38,7 @@ def _sigmoid(x: np.ndarray) -> np.ndarray:
 def _validate_positive_int(value: int, name: str) -> None:
     """Validate that an integer parameter is strictly positive."""
 
-    if isinstance(value, bool) or not isinstance(value, int):
+    if isinstance(value, bool) or not isinstance(value, numbers.Integral):
         raise TypeError(f"{name} must be an integer.")
     if value <= 0:
         raise ValueError(f"{name} must be positive.")
@@ -46,14 +47,14 @@ def _validate_positive_int(value: int, name: str) -> None:
 def _validate_seed(seed: int) -> None:
     """Validate RNG seed type."""
 
-    if isinstance(seed, bool) or not isinstance(seed, int):
+    if isinstance(seed, bool) or not isinstance(seed, numbers.Integral):
         raise TypeError("seed must be an integer.")
 
 
 def _validate_treated_unit(treated_unit: int, n_units: int) -> None:
     """Validate treated unit id for synthetic control data."""
 
-    if isinstance(treated_unit, bool) or not isinstance(treated_unit, int):
+    if isinstance(treated_unit, bool) or not isinstance(treated_unit, numbers.Integral):
         raise TypeError("treated_unit must be an integer.")
     if treated_unit < 0:
         raise ValueError("treated_unit must be between 0 and n_units - 1.")
