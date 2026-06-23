@@ -55,6 +55,9 @@ def test_instrumental_variables_rejects_invalid_inputs() -> None:
     with pytest.raises(ValueError, match="covariates must be unique."):
         instrumental_variables_ate(data, covariates=["x", "x"])
 
+    with pytest.raises(TypeError, match="covariates must be a sequence of strings."):
+        instrumental_variables_ate(data, covariates=[["x"]])  # type: ignore[list-item]
+
     bad_treatment = data.copy()
     bad_treatment.loc[bad_treatment.index[:1], "treatment"] = 2
     with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):

@@ -59,10 +59,10 @@ def _validate_iv_inputs(
             covariate_list = list(covariates)
         except TypeError as exc:
             raise TypeError("covariates must be a sequence of column names.") from exc
-        if len(set(covariate_list)) != len(covariate_list):
-            raise ValueError("covariates must be unique.")
         if not all(isinstance(column, str) for column in covariate_list):
             raise TypeError("covariates must be a sequence of strings.")
+        if len(set(covariate_list)) != len(covariate_list):
+            raise ValueError("covariates must be unique.")
 
     required = [treatment_col, outcome_col, instrument_col, *covariate_list]
     missing = [column for column in required if column not in data.columns]
