@@ -63,6 +63,23 @@ def test_placebo_treatment_test_rejects_missing_treatment_or_invalid_treatment_d
             covariates=["x1", "x2", "x3"],
         )
 
+    with pytest.raises(TypeError, match="treatment_col must be a string."):
+        placebo_treatment_test(
+            data=dataset.data,
+            estimator=ipw_ate,
+            covariates=["x1", "x2", "x3"],
+            treatment_col=1,  # type: ignore[arg-type]
+        )
+
+    bad_treatment = dataset.data.copy()
+    bad_treatment.loc[bad_treatment.index[:2], "treatment"] = 2
+    with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):
+        placebo_treatment_test(
+            data=bad_treatment,
+            estimator=ipw_ate,
+            covariates=["x1", "x2", "x3"],
+        )
+
 
 def test_omitted_confounder_simulation_input_validation() -> None:
     dataset = make_confounded_binary_treatment(n=200, seed=17)
@@ -130,6 +147,8 @@ def test_omitted_confounder_simulation_rejects_no_treatment_variation() -> None:
 
 
 def test_omitted_confounder_simulation_rejects_nonfinite_treatment_values() -> None:
+    dataset = make_confounded_binary_treatment(n=200, seed=17)
+
     data = pd.DataFrame(
         {
             "treatment": [0, 1, 0, np.nan, 1],
@@ -144,3 +163,13 @@ def test_omitted_confounder_simulation_rejects_nonfinite_treatment_values() -> N
             base_effect=0.8,
             confounder_strength_grid=[0.0, 0.2],
         )
+
+    bad_treatment = pd.DataFrame(
+        {
+            "treatment": [0, 1, 2, 1, 0],
+            "x1": [0.1, 0.2, 0.3, 0.4, 0.5],
+            "outcome": [1.0, 1.2, 1.1, 1.4, 1.0],
+        }
+    )
+    with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):
+        omitted_confounder_simulation(data=bad_treatment, base_effect=dataset.true_ate, confounder_strength_grid=[0.0])

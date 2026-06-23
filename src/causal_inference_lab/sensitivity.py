@@ -52,11 +52,25 @@ def _validate_covariates(data: pd.DataFrame, covariates: Sequence[str]) -> list[
     return covariates_list
 
 
-def _validate_treatment_col(data: pd.DataFrame, treatment_col: str) -> None:
-    """Validate treatment column existence."""
+def _validate_treatment_col(data: pd.DataFrame, treatment_col: str) -> np.ndarray:
+    """Validate treatment column and return numeric binary treatment values."""
 
+    if not isinstance(treatment_col, str):
+        raise TypeError("treatment_col must be a string.")
     if treatment_col not in data.columns:
         raise ValueError(f"Unknown treatment column: {treatment_col}")
+
+    try:
+        treatment = data[treatment_col].to_numpy(dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("treatment must be numeric and finite.") from exc
+
+    if not np.all(np.isfinite(treatment)):
+        raise ValueError("Treatment values must be finite.")
+    if not np.isin(np.unique(treatment), [0, 1]).all():
+        raise ValueError("treatment must be binary and encoded as 0/1.")
+
+    return treatment
 
 
 def _validate_seed(seed: int) -> None:
@@ -138,7 +152,8 @@ def placebo_treatment_test(
 
     rng = np.random.default_rng(seed)
     placebo_data = data.copy()
-    placebo_data[treatment_col] = rng.permutation(placebo_data[treatment_col].to_numpy())
+    treatment = _validate_treatment_col(data, treatment_col)
+    placebo_data[treatment_col] = rng.permutation(treatment)
 
     reference = _estimate_treatment_effect(data, estimator, covariates_list)
     placebo = _estimate_treatment_effect(placebo_data, estimator, covariates_list)
@@ -167,18 +182,10 @@ def omitted_confounder_simulation(
     domain-specific sensitivity model.
     """
     _validate_data_frame(data)
-    _validate_treatment_col(data, treatment_col)
+    treatment = _validate_treatment_col(data, treatment_col)
     base_effect = _validate_numeric_value(base_effect, "base_effect")
     strengths = _validate_confounder_strength_grid(confounder_strength_grid)
     _validate_seed(seed)
-
-    try:
-        treatment = data[treatment_col].to_numpy(dtype=float)
-    except (TypeError, ValueError) as exc:
-        raise ValueError("treatment must be numeric and finite.") from exc
-
-    if not np.all(np.isfinite(treatment)):
-        raise ValueError("Treatment values must be finite.")
     if np.var(treatment) == 0:
         raise ValueError("Treatment must have variation for sensitivity analysis.")
 
