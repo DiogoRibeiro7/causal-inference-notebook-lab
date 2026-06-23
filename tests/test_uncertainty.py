@@ -54,3 +54,35 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             n_bootstrap_samples=10,
             confidence_level=1.1,
         )
+
+    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string"):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame, _covariates: aipw_ate(frame, ["x1", "x2", "x3"]),
+            covariates="x1",
+            n_bootstrap_samples=10,
+        )
+
+    with pytest.raises(ValueError, match="covariates must not be empty"):
+        bootstrap_ate(
+            dataset.data,
+            lambda frame, _covariates: aipw_ate(frame, ["x1", "x2", "x3"]),
+            covariates=[],
+            n_bootstrap_samples=10,
+        )
+
+    class BadEstimatorResult:
+        def __init__(self) -> None:
+            self.estimate = "bad-value"
+
+    def bad_estimator(_: pd.DataFrame) -> BadEstimatorResult:
+        return BadEstimatorResult()
+
+    with pytest.raises(TypeError, match="estimator `estimate` must be numeric"):
+        bootstrap_ate(
+            dataset.data,
+            bad_estimator,
+            n_bootstrap_samples=3,
+            seed=0,
+            confidence_level=0.95,
+        )

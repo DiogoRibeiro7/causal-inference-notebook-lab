@@ -39,6 +39,51 @@ def _validate_common_inputs(
         raise ValueError("confidence_level must be strictly between 0 and 1.")
 
 
+def _validate_covariates(covariates: Sequence[str]) -> list[str]:
+    """Validate and normalize covariate names for bootstrap estimators."""
+
+    if isinstance(covariates, str):
+        raise TypeError("covariates must be a sequence of column names, not a string.")
+
+    try:
+        covariate_list = list(covariates)
+    except TypeError as exc:
+        raise TypeError("covariates must be a sequence of column names.") from exc
+
+    if not covariate_list:
+        raise ValueError("covariates must not be empty.")
+
+    if not all(isinstance(column, str) for column in covariate_list):
+        raise TypeError("covariates must be a sequence of strings.")
+
+    if len(set(covariate_list)) != len(covariate_list):
+        raise ValueError("covariates must be unique.")
+
+    return covariate_list
+
+
+def _extract_estimate(estimator_output: object) -> float:
+    """Return the scalar estimate from a causal estimator output."""
+
+    if not hasattr(estimator_output, "estimate"):
+        raise TypeError("estimator must return an object with an `estimate` attribute.")
+
+    try:
+        estimate = getattr(estimator_output, "estimate")
+    except Exception as exc:
+        raise TypeError("estimator returned an invalid `estimate` field.") from exc
+
+    try:
+        estimate_float = float(estimate)
+    except (TypeError, ValueError) as exc:
+        raise TypeError("estimator `estimate` must be numeric and finite.") from exc
+
+    if not np.isfinite(estimate_float):
+        raise ValueError("estimator `estimate` must be finite.")
+
+    return estimate_float
+
+
 def bootstrap_ate(
     data: pd.DataFrame,
     estimator: Callable[[pd.DataFrame], EffectEstimate] | Callable[[pd.DataFrame, Sequence[str]], EffectEstimate],
@@ -67,26 +112,25 @@ def bootstrap_ate(
     if n_bootstrap_samples < 2:
         raise ValueError("n_bootstrap_samples must be at least 2 to estimate a standard error.")
     if covariates is not None:
-        if not isinstance(covariates, Sequence):
-            raise ValueError("covariates must be a sequence of column names.")
-        if not covariates:
-            raise ValueError("covariates must not be empty when provided.")
+        covariate_list = _validate_covariates(covariates)
+    else:
+        covariate_list = None
 
     rng = np.random.default_rng(seed)
     bootstrap_estimates = np.empty(n_bootstrap_samples, dtype=float)
 
-    if covariates is None:
-        base_estimate = float(estimator(data).estimate)
+    if covariate_list is None:
+        base_estimate = _extract_estimate(estimator(data))
         for i in range(n_bootstrap_samples):
             sample_index = rng.choice(data.index, size=len(data), replace=True)
             sample = data.loc[sample_index].reset_index(drop=True)
-            bootstrap_estimates[i] = float(estimator(sample).estimate)
+            bootstrap_estimates[i] = _extract_estimate(estimator(sample))
     else:
-        base_estimate = float(estimator(data, covariates).estimate)
+        base_estimate = _extract_estimate(estimator(data, covariate_list))
         for i in range(n_bootstrap_samples):
             sample_index = rng.choice(data.index, size=len(data), replace=True)
             sample = data.loc[sample_index].reset_index(drop=True)
-            bootstrap_estimates[i] = float(estimator(sample, covariates).estimate)
+            bootstrap_estimates[i] = _extract_estimate(estimator(sample, covariate_list))
 
     alpha = 1.0 - confidence_level
     lower_tail = alpha / 2.0
