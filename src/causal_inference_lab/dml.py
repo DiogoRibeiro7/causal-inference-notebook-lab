@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numbers
 from typing import Sequence
 
 import numpy as np
@@ -114,12 +115,14 @@ def double_machine_learning_ate(
         treatment_col=treatment_col,
         outcome_col=outcome_col,
     )
-    if not isinstance(n_splits, int) or n_splits < 2:
+    if isinstance(n_splits, bool) or not isinstance(n_splits, numbers.Integral) or n_splits < 2:
         raise ValueError("n_splits must be an integer >= 2.")
+    n_splits = int(n_splits)
     if n_splits > len(data):
         raise ValueError("n_splits cannot exceed the number of observations.")
-    if not isinstance(seed, int) or isinstance(seed, bool):
+    if isinstance(seed, bool) or not isinstance(seed, numbers.Integral):
         raise ValueError("seed must be an integer.")
+    seed = int(seed)
 
     outcome_base = outcome_model or LinearRegression()
     treatment_base = treatment_model or LogisticRegression(max_iter=1_000)

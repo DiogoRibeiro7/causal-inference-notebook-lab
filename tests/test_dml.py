@@ -42,3 +42,11 @@ def test_dml_raises_for_invalid_inputs() -> None:
 
     with pytest.raises(ValueError, match="covariates must not be empty."):
         double_machine_learning_ate(dataset.data, [])
+
+    result = double_machine_learning_ate(
+        dataset.data,
+        covariates,
+        n_splits=np.int64(5),
+        seed=np.int64(7),
+    )
+    assert np.isfinite(result.estimate)
