@@ -120,6 +120,13 @@ def test_omitted_confounder_simulation_input_validation() -> None:
             confounder_strength_grid=[-0.2],
         )
 
+    with pytest.raises(ValueError, match="confounder_strength_grid values must be finite."):
+        omitted_confounder_simulation(
+            data=data,
+            base_effect=dataset.true_ate,
+            confounder_strength_grid=[0.1, float("inf")],
+        )
+
     with pytest.raises(TypeError, match="seed must be an integer."):
         omitted_confounder_simulation(
             data=data,

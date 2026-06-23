@@ -108,7 +108,9 @@ def _validate_confounder_strength_grid(strength_grid: Sequence[float]) -> list[f
         if isinstance(strength, bool) or not isinstance(strength, Real):
             raise ValueError("confounder_strength_grid must contain numeric values.")
         strength_float = float(strength)
-        if np.isnan(strength_float) or strength_float < 0:
+        if not np.isfinite(strength_float):
+            raise ValueError("confounder_strength_grid values must be finite.")
+        if strength_float < 0:
             raise ValueError("confounder_strength_grid values must be non-negative.")
         numeric_strengths.append(strength_float)
 
