@@ -48,3 +48,7 @@ def test_data_generators_validate_rdd_inputs() -> None:
 
     with pytest.raises(ValueError, match="cutoff must be finite."):
         generators.make_sharp_rdd_data(cutoff=np.inf)
+
+    rdd = generators.make_sharp_rdd_data(n=np.int64(100), cutoff=np.float64(0.0), seed=np.int64(13))
+    assert len(rdd.data) == 100
+    assert set(rdd.data["treatment"].unique()) == {0, 1}

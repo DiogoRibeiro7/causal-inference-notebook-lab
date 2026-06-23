@@ -65,7 +65,7 @@ def _validate_treated_unit(treated_unit: int, n_units: int) -> None:
 def _validate_cutoff(cutoff: float) -> None:
     """Validate RDD cutoff scalar."""
 
-    if isinstance(cutoff, bool) or not isinstance(cutoff, int | float):
+    if isinstance(cutoff, bool) or not isinstance(cutoff, numbers.Real):
         raise TypeError("cutoff must be a finite real number.")
     if not np.isfinite(cutoff):
         raise ValueError("cutoff must be finite.")
