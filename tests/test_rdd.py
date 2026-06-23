@@ -23,10 +23,13 @@ def test_local_linear_rdd_accepts_numpy_numeric_cutoff_and_bandwidth() -> None:
     dataset = make_sharp_rdd_data(n=2_000, seed=12)
     data = dataset.data
 
-    result = local_linear_rdd(data, cutoff=np.float64(0.0), bandwidth=np.float64(1.0))
+    float_result = local_linear_rdd(data, cutoff=np.float64(0.0), bandwidth=np.float64(1.0))
+    int_result = local_linear_rdd(data, cutoff=np.int64(0), bandwidth=np.int64(1))
 
-    assert np.isfinite(result.estimate)
-    assert np.isfinite(result.standard_error)
+    assert np.isfinite(float_result.estimate)
+    assert np.isfinite(float_result.standard_error)
+    assert np.isfinite(int_result.estimate)
+    assert np.isfinite(int_result.standard_error)
 
 
 def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:

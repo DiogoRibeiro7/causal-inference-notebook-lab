@@ -16,6 +16,10 @@ def test_data_generators_validate_positive_integer_parameters() -> None:
     with pytest.raises(TypeError, match="seed must be an integer."):
         generators.make_iv_data(seed="7")  # type: ignore[arg-type]
 
+    confounded = generators.make_confounded_binary_treatment(n=np.int64(10), seed=np.int64(22))
+    assert len(confounded.data) == 10
+    assert np.isfinite(confounded.true_ate)
+
     iv_dataset = generators.make_iv_data(n=np.int64(10), seed=np.int64(12))
     assert len(iv_dataset.data) == 10
 
