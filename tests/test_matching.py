@@ -91,3 +91,19 @@ def test_matching_balance_table_validates_inputs() -> None:
     empty = data.iloc[:0]
     with pytest.raises(ValueError, match="matched_data must not be empty."):
         matching_balance_table(data=data, covariates=covariates, matched_data=empty)
+
+
+def test_matching_accepts_numpy_integer_hyperparameters() -> None:
+    dataset = make_confounded_binary_treatment(n=120, seed=37)
+    data = dataset.data
+    covariates = ["x1", "x2", "x3"]
+
+    result = nearest_neighbour_matching(
+        data=data,
+        covariates=covariates,
+        n_neighbors=np.int64(2),
+    )
+    assert result.effect.n_observations >= 2
+
+    ps_result = propensity_score_matching(data=data, covariates=covariates, random_state=np.int64(3))
+    assert ps_result.effect.n_observations >= 2

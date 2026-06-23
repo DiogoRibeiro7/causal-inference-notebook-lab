@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numbers
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -97,7 +98,7 @@ def _validate_caliper(caliper: float | None, param_name: str = "caliper") -> Non
 
     if caliper is None:
         return
-    if isinstance(caliper, bool) or not isinstance(caliper, (int, float)):
+    if isinstance(caliper, bool) or not isinstance(caliper, numbers.Real):
         raise TypeError(f"{param_name} must be a numeric value.")
     if not np.isfinite(float(caliper)):
         raise ValueError(f"{param_name} must be finite.")
@@ -109,7 +110,7 @@ def _validate_random_state(random_state: int | None) -> None:
     """Validate optional random state used in tie-breaking."""
 
     if random_state is not None:
-        if isinstance(random_state, bool) or not isinstance(random_state, int):
+        if isinstance(random_state, bool) or not isinstance(random_state, numbers.Integral):
             raise ValueError("random_state must be an integer.")
 
 
@@ -310,10 +311,11 @@ def nearest_neighbour_matching(
     """
 
     covariate_list = _validate_matching_inputs(data, covariates, treatment_col=treatment_col, outcome_col=outcome_col)
-    if isinstance(n_neighbors, bool) or not isinstance(n_neighbors, int):
+    if isinstance(n_neighbors, bool) or not isinstance(n_neighbors, numbers.Integral):
         raise ValueError("n_neighbors must be an integer >= 1.")
     if n_neighbors < 1:
         raise ValueError("n_neighbors must be an integer >= 1.")
+    n_neighbors = int(n_neighbors)
     _validate_caliper(caliper)
 
     treatment_mask = _prepare_treatment_mask(data, treatment_col)
