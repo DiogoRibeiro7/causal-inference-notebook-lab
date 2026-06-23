@@ -43,6 +43,13 @@ def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:
     assert sensitivities.shape[0] == 3
     assert np.all(np.isfinite(sensitivities["estimate"]))
 
+    int_sensitivities = rdd_bandwidth_sensitivity(
+        data,
+        bandwidth_grid=[np.int64(1), np.int64(2)],
+    )
+    assert int_sensitivities.shape[0] == 2
+    assert np.all(np.isfinite(int_sensitivities["estimate"]))
+
 
 def test_local_linear_rdd_input_validation() -> None:
     with pytest.raises(ValueError, match="data must be a pandas DataFrame."):
