@@ -71,12 +71,12 @@ def _validate_inputs(
     if not treatment_values.issubset({0.0, 1.0}):
         raise ValueError("treatment_col must be binary (0/1).")
 
-    if not isinstance(bandwidth, int | float) or isinstance(bandwidth, bool):
+    if not isinstance(bandwidth, Real) or isinstance(bandwidth, bool):
         raise ValueError("bandwidth must be positive.")
     if not np.isfinite(bandwidth) or bandwidth <= 0:
         raise ValueError("bandwidth must be positive.")
 
-    if not isinstance(cutoff, (int, float)) or isinstance(cutoff, bool):
+    if not isinstance(cutoff, Real) or isinstance(cutoff, bool):
         raise ValueError("cutoff must be a finite real number.")
     if not np.isfinite(cutoff):
         raise ValueError("cutoff must be a finite real number.")

@@ -19,6 +19,16 @@ def test_local_linear_rdd_estimate_close_to_true_ate() -> None:
     assert result.bandwidth == 1.0
 
 
+def test_local_linear_rdd_accepts_numpy_numeric_cutoff_and_bandwidth() -> None:
+    dataset = make_sharp_rdd_data(n=2_000, seed=12)
+    data = dataset.data
+
+    result = local_linear_rdd(data, cutoff=np.float64(0.0), bandwidth=np.float64(1.0))
+
+    assert np.isfinite(result.estimate)
+    assert np.isfinite(result.standard_error)
+
+
 def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:
     dataset = make_sharp_rdd_data(n=3_000, seed=13)
     data = dataset.data
@@ -64,6 +74,9 @@ def test_local_linear_rdd_input_validation() -> None:
 
     with pytest.raises(ValueError, match="bandwidth must be positive."):
         local_linear_rdd(make_sharp_rdd_data(n=50, seed=3).data, bandwidth=-1.0)
+
+    with pytest.raises(ValueError, match="cutoff must be a finite real number."):
+        local_linear_rdd(make_sharp_rdd_data(n=50, seed=4).data, cutoff=True)
 
     with pytest.raises(TypeError, match="bandwidth_grid must be a sequence of numeric bandwidths."):
         rdd_bandwidth_sensitivity(make_sharp_rdd_data(n=100, seed=4).data, bandwidth_grid="bad-grid")
