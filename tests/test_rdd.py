@@ -32,7 +32,10 @@ def test_local_linear_rdd_accepts_numpy_numeric_cutoff_and_bandwidth() -> None:
 def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:
     dataset = make_sharp_rdd_data(n=3_000, seed=13)
     data = dataset.data
-    sensitivities = rdd_bandwidth_sensitivity(data, bandwidth_grid=[0.5, 1.0, 1.5])
+    sensitivities = rdd_bandwidth_sensitivity(
+        data,
+        bandwidth_grid=[np.float64(0.5), np.float64(1.0), np.float64(1.5)],
+    )
 
     assert sensitivities.shape[0] == 3
     assert np.all(np.isfinite(sensitivities["estimate"]))
