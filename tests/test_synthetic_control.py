@@ -45,6 +45,12 @@ def test_synthetic_control_input_validation() -> None:
     with pytest.raises(TypeError, match="treated_unit must be an int or a string."):
         fit_synthetic_control(data, treated_unit=1.2)  # type: ignore[arg-type]
 
+    with pytest.raises(TypeError, match="treated_unit must be an int or a string."):
+        fit_synthetic_control(data, treated_unit=True)  # type: ignore[arg-type]
+
+    result = fit_synthetic_control(data, treated_unit=np.int64(0), pre_period_end=3)
+    assert abs(result.estimated_effect - dataset.true_ate) < 1.0
+
     with pytest.raises(ValueError, match="Missing required columns"):
         fit_synthetic_control(data.drop(columns=["time"]), treated_unit=0)
 

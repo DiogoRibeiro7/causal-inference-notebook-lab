@@ -39,7 +39,7 @@ def fit_synthetic_control(
     for name in [unit_col, time_col, outcome_col, treatment_col]:
         if not isinstance(name, str):
             raise TypeError("unit_col, time_col, outcome_col, and treatment_col must be strings.")
-    if not isinstance(treated_unit, (str, int)):
+    if not isinstance(treated_unit, (str, numbers.Integral)):
         raise TypeError("treated_unit must be an int or a string.")
     if isinstance(treated_unit, bool):
         raise TypeError("treated_unit must be an int or a string.")
