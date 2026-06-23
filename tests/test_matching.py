@@ -57,6 +57,12 @@ def test_matching_raises_for_invalid_matching_inputs() -> None:
     with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
         nearest_neighbour_matching(data=dataset.data, covariates="x1")  # type: ignore[arg-type]
 
+    with pytest.raises(TypeError, match="treatment_col must be a string."):
+        nearest_neighbour_matching(data=dataset.data, covariates=["x1", "x2", "x3"], treatment_col=1)  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError, match="treatment_col must be a string."):
+        propensity_score_matching(data=dataset.data, covariates=["x1", "x2", "x3"], treatment_col=1)  # type: ignore[arg-type]
+
 
 def test_propensity_score_matching_validates_propensity_scores() -> None:
     dataset = make_confounded_binary_treatment(n=200, seed=19)
