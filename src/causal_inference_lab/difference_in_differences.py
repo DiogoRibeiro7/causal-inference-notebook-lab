@@ -31,6 +31,12 @@ def _validate_did_inputs(
     time_col: str,
     outcome_col: str,
 ) -> None:
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError("data must be a pandas DataFrame.")
+    for name in [group_col, post_col, time_col, outcome_col]:
+        if not isinstance(name, str):
+            raise TypeError("group_col, post_col, time_col, and outcome_col must be strings.")
+
     required = [group_col, post_col, time_col, outcome_col]
     missing = [column for column in required if column not in data.columns]
     if missing:
@@ -39,17 +45,24 @@ def _validate_did_inputs(
     if data.empty:
         raise ValueError("data must not be empty.")
 
-    if data[[group_col, post_col]].isnull().any().any():
-        raise ValueError("group_col and post_col must not contain missing values.")
+    if data[required].isnull().any().any():
+        raise ValueError("required columns must not contain missing values.")
 
-    if data[time_col].nunique() < 2:
+    try:
+        time_values = data[time_col].to_numpy(dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("time_col must be numeric and finite.") from exc
+    if not np.isfinite(time_values).all():
+        raise ValueError("time_col must be numeric and finite.")
+    if len(np.unique(time_values)) < 2:
         raise ValueError("Need at least two unique time periods.")
 
     if not set(data[post_col].dropna().unique()).issubset({0, 1}):
         raise ValueError("post_col must be binary 0/1.")
 
-    if not data[post_col].isin([0, 1]).all():
-        raise ValueError("post_col must be binary 0/1.")
+    post_values = set(data[post_col].dropna().unique())
+    if post_values != {0, 1}:
+        raise ValueError("post_col must have observations in both pre and post periods.")
 
     group_values = set(data[group_col].dropna().unique())
     if len(group_values) != 2:
@@ -68,6 +81,13 @@ def _validate_did_inputs(
     if treatment_like != {0, 1}:
         raise ValueError("group_col must be encoded as 0/1.")
 
+    try:
+        outcome_values = data[outcome_col].to_numpy(dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("outcome_col must be numeric and finite.") from exc
+    if not np.isfinite(outcome_values).all():
+        raise ValueError("outcome_col must be numeric and finite.")
+
 
 def _pre_trend_diagnostics(
     data: pd.DataFrame,
@@ -77,18 +97,28 @@ def _pre_trend_diagnostics(
     outcome_col: str,
 ) -> tuple[float, float]:
     pre_data = data[data[post_col] == 0]
+    try:
+        pre_design_time = pre_data[time_col].to_numpy(dtype=float)
+        pre_design_outcome = pre_data[outcome_col].to_numpy(dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("time_col and outcome_col must be numeric and finite.") from exc
+    if not np.isfinite(pre_design_time).all():
+        raise ValueError("time_col must be numeric and finite.")
+    if not np.isfinite(pre_design_outcome).all():
+        raise ValueError("outcome_col must be numeric and finite.")
+
     if pre_data[time_col].nunique() < 2:
         return 0.0, 1.0
 
     design = pd.DataFrame(
         {
-            "time": pre_data[time_col].astype(float),
+            "time": pre_design_time,
             "group": pre_data[group_col].astype(float),
         }
     )
     design["interaction"] = design["time"] * design["group"]
     model = sm.OLS(
-        pre_data[outcome_col].astype(float),
+        pre_design_outcome,
         sm.add_constant(design, has_constant="add"),
     ).fit()
 
