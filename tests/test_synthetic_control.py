@@ -61,6 +61,12 @@ def test_synthetic_control_input_validation() -> None:
     with pytest.raises(TypeError, match="pre_period_end must be an integer."):
         fit_synthetic_control(data, treated_unit=0, pre_period_end=3.5)
 
+    with pytest.raises(TypeError, match="pre_period_end must be an integer."):
+        fit_synthetic_control(data, treated_unit=0, pre_period_end=True)
+
+    result = fit_synthetic_control(data, treated_unit=0, pre_period_end=np.int64(3))
+    assert abs(result.estimated_effect - dataset.true_ate) < 1.0
+
     with pytest.raises(
         ValueError,
         match="pre_period_end must be within observed treatment periods.",

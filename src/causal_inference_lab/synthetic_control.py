@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import numbers
 
 import numpy as np
 import pandas as pd
@@ -88,8 +89,11 @@ def fit_synthetic_control(
             )
         pre_period_end = int(np.min(treated_after)) - 1
     else:
-        if isinstance(pre_period_end, bool) or not isinstance(pre_period_end, int):
+        if isinstance(pre_period_end, bool):
             raise TypeError("pre_period_end must be an integer.")
+        if not isinstance(pre_period_end, numbers.Integral):
+            raise TypeError("pre_period_end must be an integer.")
+        pre_period_end = int(pre_period_end)
 
     if pre_period_end < int(np.min(treated_times)) or pre_period_end >= int(np.max(treated_times)):
         raise ValueError("pre_period_end must be within observed treatment periods.")
