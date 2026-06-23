@@ -26,6 +26,8 @@ from causal_inference_lab.meta_learners import (
     TMetaLearner,
     XMetaLearner,
 )
+from causal_inference_lab.difference_in_differences import DifferenceInDifferencesResult, difference_in_differences
+from causal_inference_lab.instrumental_variables import IVResult, instrumental_variables_ate
 from causal_inference_lab.rdd import (
     RDDResult,
     local_linear_rdd,
@@ -56,6 +58,10 @@ __all__ = [
     "SMetaLearner",
     "TMetaLearner",
     "XMetaLearner",
+    "DifferenceInDifferencesResult",
+    "difference_in_differences",
+    "IVResult",
+    "instrumental_variables_ate",
     "RDDResult",
     "local_linear_rdd",
     "rdd_bandwidth_sensitivity",
