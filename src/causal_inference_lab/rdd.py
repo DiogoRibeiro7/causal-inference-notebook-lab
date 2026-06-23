@@ -8,6 +8,7 @@ from typing import Sequence
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+import pandas.api.types as ptypes
 
 
 @dataclass(frozen=True)
@@ -28,14 +29,56 @@ def _validate_inputs(
     cutoff: float,
     bandwidth: float,
 ) -> None:
+    if not isinstance(data, pd.DataFrame):
+        raise ValueError("data must be a pandas DataFrame.")
+    if data.empty:
+        raise ValueError("data must not be empty.")
+
+    if not isinstance(running_col, str):
+        raise ValueError("running_col must be a string.")
+    if not isinstance(outcome_col, str):
+        raise ValueError("outcome_col must be a string.")
+    if not isinstance(treatment_col, str):
+        raise ValueError("treatment_col must be a string.")
+
     required = [running_col, outcome_col, treatment_col]
     missing = [column for column in required if column not in data.columns]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
-    if not isinstance(bandwidth, int | float) or bandwidth <= 0:
+
+    if data[required].isna().any().any():
+        raise ValueError("Required columns must not contain missing values.")
+    if not ptypes.is_numeric_dtype(data[running_col]):
+        raise ValueError("running_col must be numeric.")
+    if not ptypes.is_numeric_dtype(data[outcome_col]):
+        raise ValueError("outcome_col must be numeric.")
+    if not ptypes.is_numeric_dtype(data[treatment_col]):
+        raise ValueError("treatment_col must be numeric.")
+
+    if ptypes.is_bool_dtype(data[treatment_col]):
+        raise ValueError("treatment_col must not be boolean; use 0/1 values.")
+
+    running = data[running_col].to_numpy(dtype=float)
+    outcome = data[outcome_col].to_numpy(dtype=float)
+    treatment = data[treatment_col].to_numpy(dtype=float)
+    if not np.all(np.isfinite(running)) or not np.all(np.isfinite(outcome)):
+        raise ValueError("running_col and outcome_col must contain finite values.")
+    if not np.all(np.isfinite(treatment)):
+        raise ValueError("treatment_col must contain finite values.")
+
+    treatment_values = {value for value in np.unique(treatment)}
+    if not treatment_values.issubset({0.0, 1.0}):
+        raise ValueError("treatment_col must be binary (0/1).")
+
+    if not isinstance(bandwidth, int | float) or isinstance(bandwidth, bool):
         raise ValueError("bandwidth must be positive.")
+    if not np.isfinite(bandwidth) or bandwidth <= 0:
+        raise ValueError("bandwidth must be positive.")
+
+    if not isinstance(cutoff, (int, float)) or isinstance(cutoff, bool):
+        raise ValueError("cutoff must be a finite real number.")
     if not np.isfinite(cutoff):
-        raise ValueError("cutoff must be finite.")
+        raise ValueError("cutoff must be a finite real number.")
 
 
 def local_linear_rdd(

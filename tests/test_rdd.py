@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
+import pytest
 
 from causal_inference_lab.data_generators import make_sharp_rdd_data
 from causal_inference_lab.rdd import local_linear_rdd, rdd_bandwidth_sensitivity
@@ -24,3 +26,41 @@ def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:
 
     assert sensitivities.shape[0] == 3
     assert np.all(np.isfinite(sensitivities["estimate"]))
+
+
+def test_local_linear_rdd_input_validation() -> None:
+    with pytest.raises(ValueError, match="data must be a pandas DataFrame."):
+        local_linear_rdd("bad")
+
+    with pytest.raises(ValueError, match="running_col must be a string."):
+        local_linear_rdd(
+            make_sharp_rdd_data(n=100, seed=1).data,
+            running_col=123,
+        )
+
+    with pytest.raises(ValueError, match="Missing required columns"):
+        local_linear_rdd(pd.DataFrame({"running": [0, 1], "treatment": [0, 1]}), outcome_col="outcome")
+
+    with pytest.raises(ValueError, match="must be numeric"):
+        local_linear_rdd(
+            pd.DataFrame(
+                {
+                    "running": [0, 1],
+                    "outcome": [1.0, 2.0],
+                    "treatment": ["yes", "no"],
+                }
+            )
+        )
+
+    with pytest.raises(ValueError, match="binary"):
+        local_linear_rdd(
+            pd.DataFrame(
+                {"running": [0.0, 1.0], "outcome": [1.0, 2.0], "treatment": [0.0, 2.0]}
+            )
+        )
+
+    with pytest.raises(ValueError, match="must be a finite real number."):
+        local_linear_rdd(make_sharp_rdd_data(n=50, seed=2).data, cutoff=np.nan)
+
+    with pytest.raises(ValueError, match="bandwidth must be positive."):
+        local_linear_rdd(make_sharp_rdd_data(n=50, seed=3).data, bandwidth=-1.0)
