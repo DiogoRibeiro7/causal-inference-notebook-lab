@@ -135,6 +135,14 @@ def test_bootstrap_ate_catches_invalid_inputs() -> None:
             n_bootstrap_samples=10,
         )
 
+    result = bootstrap_ate(
+        dataset.data,
+        lambda frame: aipw_ate(frame, ["x1", "x2", "x3"]),
+        n_bootstrap_samples=np.int64(5),
+        seed=np.int64(7),
+    )
+    assert result.n_bootstrap_samples == 5
+
     with pytest.raises(TypeError, match="seed must be an integer."):
         bootstrap_ate(
             dataset.data,

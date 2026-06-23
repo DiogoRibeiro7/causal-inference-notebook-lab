@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numbers
 from dataclasses import dataclass
 from typing import Callable, Sequence
 
@@ -35,7 +36,7 @@ def _validate_common_inputs(
         raise ValueError("data must not be empty.")
     if (
         isinstance(n_bootstrap_samples, bool)
-        or not isinstance(n_bootstrap_samples, int)
+        or not isinstance(n_bootstrap_samples, numbers.Integral)
         or n_bootstrap_samples <= 0
     ):
         raise ValueError("n_bootstrap_samples must be a positive integer.")
@@ -73,7 +74,7 @@ def _validate_covariates(covariates: Sequence[str]) -> list[str]:
 def _validate_seed(seed: int) -> None:
     """Validate random seed."""
 
-    if isinstance(seed, bool) or not isinstance(seed, int):
+    if isinstance(seed, bool) or not isinstance(seed, numbers.Integral):
         raise TypeError("seed must be an integer.")
 
 
@@ -138,6 +139,8 @@ def bootstrap_ate(
         BootstrapResult with point estimate, interval bounds, standard error, and sample count.
     """
 
+    n_bootstrap_samples = int(n_bootstrap_samples)
+    seed = int(seed)
     _validate_common_inputs(data, n_bootstrap_samples, confidence_level)
     _validate_seed(seed)
     _validate_estimator(estimator)
