@@ -77,6 +77,13 @@ def test_matching_raises_for_invalid_matching_inputs() -> None:
     )
     assert ps_result.effect.n_observations >= 2
 
+    result = nearest_neighbour_matching(
+        data=dataset.data,
+        covariates=["x1", "x2", "x3"],
+        caliper=np.int64(1),
+    )
+    assert result.effect.n_observations >= 2
+
 
 def test_propensity_score_matching_validates_propensity_scores() -> None:
     dataset = make_confounded_binary_treatment(n=200, seed=19)
