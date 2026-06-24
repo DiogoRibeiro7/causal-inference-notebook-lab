@@ -38,6 +38,7 @@ def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:
     sensitivities = rdd_bandwidth_sensitivity(
         data,
         bandwidth_grid=[np.float64(0.5), np.float64(1.0), np.float64(1.5)],
+        cutoff=np.float64(0.0),
     )
 
     assert sensitivities.shape[0] == 3
