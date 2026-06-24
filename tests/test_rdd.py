@@ -46,6 +46,7 @@ def test_rdd_bandwidth_sensitivity_includes_monotonic_inputs() -> None:
     int_sensitivities = rdd_bandwidth_sensitivity(
         data,
         bandwidth_grid=[np.int64(1), np.int64(2)],
+        cutoff=np.int64(0),
     )
     assert int_sensitivities.shape[0] == 2
     assert np.all(np.isfinite(int_sensitivities["estimate"]))
