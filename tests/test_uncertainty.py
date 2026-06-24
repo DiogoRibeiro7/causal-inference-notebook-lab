@@ -27,8 +27,16 @@ def test_bootstrap_ate_is_deterministic_and_returns_bounds() -> None:
         seed=99,
         confidence_level=0.95,
     )
+    numpy_confidence = bootstrap_ate(
+        data=data,
+        estimator=lambda frame: aipw_ate(frame, covariates),
+        n_bootstrap_samples=80,
+        seed=99,
+        confidence_level=np.float64(0.95),
+    )
 
     assert first == second
+    assert np.isfinite(numpy_confidence.estimate)
     assert (
         0.0 <= first.lower <= first.estimate <= first.upper
         <= first.estimate + abs(first.estimate) + 1.0
