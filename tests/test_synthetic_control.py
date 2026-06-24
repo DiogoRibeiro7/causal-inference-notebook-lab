@@ -73,6 +73,13 @@ def test_synthetic_control_input_validation() -> None:
     result = fit_synthetic_control(data, treated_unit=0, pre_period_end=np.int64(3))
     assert abs(result.estimated_effect - dataset.true_ate) < 1.0
 
+    combined_numpy_result = fit_synthetic_control(
+        data,
+        treated_unit=np.int64(0),
+        pre_period_end=np.int64(3),
+    )
+    assert abs(combined_numpy_result.estimated_effect - dataset.true_ate) < 1.0
+
     with pytest.raises(
         ValueError,
         match="pre_period_end must be within observed treatment periods.",
