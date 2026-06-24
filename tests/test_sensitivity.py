@@ -159,6 +159,14 @@ def test_omitted_confounder_simulation_input_validation() -> None:
     )
     assert numpy_simulation.shape[0] == 2
 
+    integer_strength_simulation = omitted_confounder_simulation(
+        data=data,
+        base_effect=np.float64(dataset.true_ate),
+        confounder_strength_grid=[np.int64(0), np.int64(1)],
+        seed=np.int64(9),
+    )
+    assert integer_strength_simulation.shape[0] == 2
+
 
 def test_omitted_confounder_simulation_rejects_no_treatment_variation() -> None:
     data = pd.DataFrame(
