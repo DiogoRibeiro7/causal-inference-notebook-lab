@@ -53,6 +53,16 @@ def test_data_generators_validate_synthetic_control_inputs() -> None:
     assert synthetic.data["treated_unit"].sum() == 1
     assert np.isfinite(synthetic.true_ate)
 
+    integer_effect_synthetic = generators.make_synthetic_control_data(
+        n_units=np.int64(10),
+        n_periods=np.int64(12),
+        pre_periods=np.int64(4),
+        treated_unit=np.int64(3),
+        effect=np.int64(2),
+        seed=np.int64(6),
+    )
+    assert np.isfinite(integer_effect_synthetic.true_ate)
+
     with pytest.raises(ValueError, match="treated_unit must be between 0 and n_units - 1."):
         generators.make_synthetic_control_data(n_units=10, treated_unit=10)
 
