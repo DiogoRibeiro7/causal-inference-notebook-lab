@@ -77,6 +77,13 @@ def test_matching_raises_for_invalid_matching_inputs() -> None:
     )
     assert ps_result.effect.n_observations >= 2
 
+    int_ps_result = propensity_score_matching(
+        data=dataset.data,
+        covariates=["x1", "x2", "x3"],
+        caliper=np.int64(1),
+    )
+    assert int_ps_result.effect.n_observations >= 2
+
     result = nearest_neighbour_matching(
         data=dataset.data,
         covariates=["x1", "x2", "x3"],
