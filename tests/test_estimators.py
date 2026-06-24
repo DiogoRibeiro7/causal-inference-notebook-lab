@@ -151,6 +151,9 @@ def test_estimator_helpers_validate_numeric_parameters() -> None:
     result = ipw_ate(data, ["x1", "x2", "x3"], clip=np.float64(0.02))
     assert np.isfinite(result.estimate)
 
+    aipw_result = aipw_ate(data, ["x1", "x2", "x3"], clip=np.float64(0.02))
+    assert np.isfinite(aipw_result.estimate)
+
     scores = estimate_propensity_scores(data, ["x1", "x2", "x3"], clip=np.float64(0.02))
     assert np.isfinite(scores).all()
 
