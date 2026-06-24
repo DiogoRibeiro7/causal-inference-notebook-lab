@@ -141,5 +141,13 @@ def test_matching_accepts_numpy_integer_hyperparameters() -> None:
     )
     assert result.effect.n_observations >= 2
 
+    combined_result = nearest_neighbour_matching(
+        data=data,
+        covariates=covariates,
+        n_neighbors=np.int64(2),
+        caliper=np.float64(0.5),
+    )
+    assert combined_result.effect.n_observations >= 2
+
     ps_result = propensity_score_matching(data=data, covariates=covariates, random_state=np.int64(3))
     assert ps_result.effect.n_observations >= 2
