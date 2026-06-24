@@ -70,3 +70,10 @@ def test_data_generators_validate_rdd_inputs() -> None:
     rdd = generators.make_sharp_rdd_data(n=np.int64(100), cutoff=np.float64(0.0), seed=np.int64(13))
     assert len(rdd.data) == 100
     assert set(rdd.data["treatment"].unique()) == {0, 1}
+
+    int_cutoff_rdd = generators.make_sharp_rdd_data(
+        n=np.int64(100),
+        cutoff=np.int64(0),
+        seed=np.int64(13),
+    )
+    assert len(int_cutoff_rdd.data) == 100
