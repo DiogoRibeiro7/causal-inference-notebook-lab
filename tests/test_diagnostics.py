@@ -54,6 +54,9 @@ def test_diagnostics_ipw_weights_input_validation() -> None:
     with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
         ipw_weights(data, covariates="x1")  # type: ignore[arg-type]
 
+    weights = ipw_weights(data, covariates=["x1", "x2", "x3"], clip=np.float64(0.02))
+    assert np.isfinite(weights).all()
+
     data.loc[data.index[:1], "treatment"] = 2
     with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):
         ipw_weights(data, covariates=["x1", "x2", "x3"])
