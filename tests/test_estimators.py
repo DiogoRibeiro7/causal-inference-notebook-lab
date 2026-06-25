@@ -11,9 +11,9 @@ from causal_inference_lab.diagnostics import (
     standardized_mean_difference,
 )
 from causal_inference_lab.estimators import (
-    estimate_propensity_scores,
     aipw_ate,
     difference_in_means,
+    estimate_propensity_scores,
     fit_propensity_model,
     g_computation_ate,
     ipw_ate,
@@ -63,7 +63,9 @@ def test_standardized_mean_difference_uses_weighted_dispersion() -> None:
     )
     weights = np.array([10.0, 1.0, 1.0, 10.0], dtype=float)
 
-    observed = standardized_mean_difference(data, covariate="x", treatment_col="treatment", weights=weights)
+    observed = standardized_mean_difference(
+        data, covariate="x", treatment_col="treatment", weights=weights
+    )
     treated = data.loc[data["treatment"] == 1, "x"].to_numpy(dtype=float)
     control = data.loc[data["treatment"] == 0, "x"].to_numpy(dtype=float)
     treated_w = weights[data["treatment"] == 1]
@@ -72,7 +74,9 @@ def test_standardized_mean_difference_uses_weighted_dispersion() -> None:
     weighted_control = float(np.average(control, weights=control_w))
     treated_var = float(np.average((treated - weighted_treated) ** 2, weights=treated_w))
     control_var = float(np.average((control - weighted_control) ** 2, weights=control_w))
-    expected = (weighted_treated - weighted_control) / float(np.sqrt((treated_var + control_var) / 2.0))
+    expected = (weighted_treated - weighted_control) / float(
+        np.sqrt((treated_var + control_var) / 2.0)
+    )
 
     assert np.isclose(observed, expected)
 
@@ -100,10 +104,13 @@ def test_omitted_confounder_simulation_strength_increases_bias() -> None:
 
     assert table.shape[0] == 4
     assert np.all(np.diff(table["simulated_bias"]) >= 0.0)
-    assert table.loc[table["confounder_strength"] == 0.0, "adjusted_effect"].iloc[0] > table.loc[
-        table["confounder_strength"] == 0.6,
-        "adjusted_effect",
-    ].iloc[0]
+    assert (
+        table.loc[table["confounder_strength"] == 0.0, "adjusted_effect"].iloc[0]
+        > table.loc[
+            table["confounder_strength"] == 0.6,
+            "adjusted_effect",
+        ].iloc[0]
+    )
 
 
 def test_omitted_confounder_simulation_validates_input_grid() -> None:
@@ -111,14 +118,18 @@ def test_omitted_confounder_simulation_validates_input_grid() -> None:
     data = dataset.data
 
     try:
-        omitted_confounder_simulation(data, base_effect=dataset.true_ate, confounder_strength_grid=[])
+        omitted_confounder_simulation(
+            data, base_effect=dataset.true_ate, confounder_strength_grid=[]
+        )
     except ValueError as err:
         assert str(err) == "confounder_strength_grid must not be empty."
     else:
         raise AssertionError("Expected ValueError for empty strength grid.")
 
     try:
-        omitted_confounder_simulation(data, base_effect=dataset.true_ate, confounder_strength_grid=[-0.1])
+        omitted_confounder_simulation(
+            data, base_effect=dataset.true_ate, confounder_strength_grid=[-0.1]
+        )
     except ValueError as err:
         assert str(err) == "confounder_strength_grid values must be non-negative."
     else:
@@ -161,5 +172,7 @@ def test_estimator_helpers_validate_numeric_parameters() -> None:
     with pytest.raises(ValueError, match="clip must be between 0 and 0.5."):
         estimate_propensity_scores(data, ["x1", "x2", "x3"], clip=1.0)
 
-    with pytest.raises(TypeError, match="columns must be a sequence of column names, not a string."):
+    with pytest.raises(
+        TypeError, match="columns must be a sequence of column names, not a string."
+    ):
         fit_propensity_model(data, covariates="x1")  # type: ignore[arg-type]

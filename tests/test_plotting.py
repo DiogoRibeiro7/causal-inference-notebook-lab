@@ -20,13 +20,22 @@ def test_plot_propensity_overlap_validates_inputs() -> None:
     )
 
     with pytest.raises(ValueError, match="Missing required columns: \\['treatment'\\]"):
-        plot_propensity_overlap(data=pd.DataFrame({"wrong": [1, 0, 1, 0]}), propensity_scores=np.array([0.1, 0.2, 0.3, 0.4]))
+        plot_propensity_overlap(
+            data=pd.DataFrame({"wrong": [1, 0, 1, 0]}),
+            propensity_scores=np.array([0.1, 0.2, 0.3, 0.4]),
+        )
 
     with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):
-        plot_propensity_overlap(data=data.assign(treatment=[1, 0, 2, 0]), propensity_scores=np.array([0.1, 0.2, 0.3, 0.4]))
+        plot_propensity_overlap(
+            data=data.assign(treatment=[1, 0, 2, 0]),
+            propensity_scores=np.array([0.1, 0.2, 0.3, 0.4]),
+        )
 
     with pytest.raises(ValueError, match="Both treated and control groups are required."):
-        plot_propensity_overlap(data=data.assign(treatment=[1, 1, 1, 1]), propensity_scores=np.array([0.1, 0.2, 0.3, 0.4]))
+        plot_propensity_overlap(
+            data=data.assign(treatment=[1, 1, 1, 1]),
+            propensity_scores=np.array([0.1, 0.2, 0.3, 0.4]),
+        )
 
     with pytest.raises(ValueError, match="propensity_scores must have the same length as data."):
         plot_propensity_overlap(data=data, propensity_scores=np.array([0.1, 0.2]))
@@ -79,7 +88,9 @@ def test_plot_cate_recovery_validates_inputs() -> None:
     with pytest.raises(ValueError, match="true_cate and estimated_cate must have the same shape."):
         plot_cate_recovery(np.array([1.0, 2.0]), np.array([1.0]))
 
-    with pytest.raises(ValueError, match="true_cate and estimated_cate must be one-dimensional arrays."):
+    with pytest.raises(
+        ValueError, match="true_cate and estimated_cate must be one-dimensional arrays."
+    ):
         plot_cate_recovery(np.array([[1.0, 2.0]]), np.array([[1.0, 2.0]]))
 
     with pytest.raises(ValueError, match="true_cate must be finite."):

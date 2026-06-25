@@ -34,7 +34,9 @@ def test_data_generators_validate_did_inputs() -> None:
     with pytest.raises(ValueError, match="n_periods must be at least 4"):
         generators.make_did_panel(n_units=20, n_periods=3)
 
-    did_dataset = generators.make_did_panel(n_units=np.int64(20), n_periods=np.int64(6), seed=np.int64(13))
+    did_dataset = generators.make_did_panel(
+        n_units=np.int64(20), n_periods=np.int64(6), seed=np.int64(13)
+    )
     assert did_dataset.data["time"].max() == 5
 
 

@@ -51,7 +51,9 @@ def test_instrumental_variables_rejects_invalid_inputs() -> None:
     dataset = make_iv_data(n=300, seed=20)
     data = dataset.data
 
-    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
+    with pytest.raises(
+        TypeError, match="covariates must be a sequence of column names, not a string."
+    ):
         instrumental_variables_ate(data, covariates="x")
 
     with pytest.raises(ValueError, match="covariates must be unique."):

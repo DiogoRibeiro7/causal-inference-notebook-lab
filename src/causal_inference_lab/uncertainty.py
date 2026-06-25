@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import numbers
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Callable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -79,10 +79,7 @@ def _validate_seed(seed: int) -> None:
 
 
 def _validate_estimator(
-    estimator: (
-        Callable[[pd.DataFrame], EffectEstimate]
-        | Callable[[pd.DataFrame, Sequence[str]], EffectEstimate]
-    ),
+    estimator: Callable[..., EffectEstimate],
 ) -> None:
     """Validate estimator is callable before resampling."""
 
@@ -97,7 +94,7 @@ def _extract_estimate(estimator_output: object) -> float:
         raise TypeError("estimator must return an object with an `estimate` attribute.")
 
     try:
-        estimate = getattr(estimator_output, "estimate")
+        estimate = estimator_output.estimate
     except Exception as exc:
         raise TypeError("estimator returned an invalid `estimate` field.") from exc
 
@@ -114,10 +111,7 @@ def _extract_estimate(estimator_output: object) -> float:
 
 def bootstrap_ate(
     data: pd.DataFrame,
-    estimator: (
-        Callable[[pd.DataFrame], EffectEstimate]
-        | Callable[[pd.DataFrame, Sequence[str]], EffectEstimate]
-    ),
+    estimator: Callable[..., EffectEstimate],
     n_bootstrap_samples: int = 1_000,
     seed: int = 123,
     confidence_level: float = 0.95,
@@ -146,10 +140,7 @@ def bootstrap_ate(
     seed = int(seed)
     if n_bootstrap_samples < 2:
         raise ValueError("n_bootstrap_samples must be at least 2 to estimate a standard error.")
-    if covariates is not None:
-        covariate_list = _validate_covariates(covariates)
-    else:
-        covariate_list = None
+    covariate_list = _validate_covariates(covariates) if covariates is not None else None
 
     rng = np.random.default_rng(seed)
     bootstrap_estimates = np.empty(n_bootstrap_samples, dtype=float)

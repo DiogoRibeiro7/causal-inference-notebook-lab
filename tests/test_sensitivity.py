@@ -219,4 +219,6 @@ def test_omitted_confounder_simulation_rejects_nonfinite_treatment_values() -> N
         }
     )
     with pytest.raises(ValueError, match="treatment must be binary and encoded as 0/1."):
-        omitted_confounder_simulation(data=bad_treatment, base_effect=dataset.true_ate, confounder_strength_grid=[0.0])
+        omitted_confounder_simulation(
+            data=bad_treatment, base_effect=dataset.true_ate, confounder_strength_grid=[0.0]
+        )

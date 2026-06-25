@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Sequence
+from collections.abc import Sequence
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,9 @@ def _ensure_dataframe(data: pd.DataFrame, *, name: str) -> None:
         raise ValueError(f"{name} must contain at least one row.")
 
 
-def _ensure_covariates(data: pd.DataFrame, covariates: Sequence[str], *, name: str = "data") -> list[str]:
+def _ensure_covariates(
+    data: pd.DataFrame, covariates: Sequence[str], *, name: str = "data"
+) -> list[str]:
     """Validate covariate column names and return them as a list."""
 
     if isinstance(covariates, str):
@@ -182,8 +184,20 @@ class SMetaLearner(CATEModel):
 
         return np.column_stack([x, treatment.astype(float)])
 
-    def fit(self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str) -> "SMetaLearner":
-        """Fit the S-learner outcome model.\n\n        Args:\n+            data: Input DataFrame.\n+            covariates: Covariate column names.\n+            treatment_col: Binary treatment column.\n+            outcome_col: Outcome column.\n\n        Returns:\n+            Self.\n        """
+    def fit(
+        self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str
+    ) -> SMetaLearner:
+        """Fit the S-learner outcome model.
+
+        Args:
+            data: Input DataFrame.
+            covariates: Covariate column names.
+            treatment_col: Binary treatment column.
+            outcome_col: Outcome column.
+
+        Returns:
+            Self.
+        """
         covariate_list, x_matrix, treatment, outcome = _prepare_meta_learning_data(
             data,
             covariates,
@@ -217,8 +231,20 @@ class TMetaLearner(CATEModel):
         self.treated_model = treated_model or LinearRegression()
         self.control_model = control_model or LinearRegression()
 
-    def fit(self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str) -> "TMetaLearner":
-        """Fit separate outcome models for treated and control units.\n\n        Args:\n            data: Input DataFrame.\n            covariates: Covariate column names.\n+            treatment_col: Binary treatment column.\n+            outcome_col: Outcome column.\n\n        Returns:\n            Self.\n        """
+    def fit(
+        self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str
+    ) -> TMetaLearner:
+        """Fit separate outcome models for treated and control units.
+
+        Args:
+            data: Input DataFrame.
+            covariates: Covariate column names.
+            treatment_col: Binary treatment column.
+            outcome_col: Outcome column.
+
+        Returns:
+            Self.
+        """
         covariate_list, x_matrix, treatment, outcome = _prepare_meta_learning_data(
             data,
             covariates,
@@ -257,8 +283,20 @@ class XMetaLearner(CATEModel):
         self.effect_model_c = effect_model_c or LinearRegression()
         self.ate_: float | None = None
 
-    def fit(self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str) -> "XMetaLearner":
-        """Fit X-learner stage-one and stage-two models.\n\n        Args:\n+            data: Input DataFrame.\n+            covariates: Covariate column names.\n+            treatment_col: Binary treatment column.\n+            outcome_col: Outcome column.\n\n        Returns:\n+            Self.\n        """
+    def fit(
+        self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str
+    ) -> XMetaLearner:
+        """Fit X-learner stage-one and stage-two models.
+
+        Args:
+            data: Input DataFrame.
+            covariates: Covariate column names.
+            treatment_col: Binary treatment column.
+            outcome_col: Outcome column.
+
+        Returns:
+            Self.
+        """
         covariate_list, x_matrix, treatment, outcome = _prepare_meta_learning_data(
             data,
             covariates,
@@ -279,8 +317,12 @@ class XMetaLearner(CATEModel):
             outcome[control_mask],
         )
 
-        y1_hat = self.outcome_model_t.predict(np.column_stack([x_matrix, np.ones(len(x_matrix), dtype=float)]))
-        y0_hat = self.outcome_model_c.predict(np.column_stack([x_matrix, np.zeros(len(x_matrix), dtype=float)]))
+        y1_hat = self.outcome_model_t.predict(
+            np.column_stack([x_matrix, np.ones(len(x_matrix), dtype=float)])
+        )
+        y0_hat = self.outcome_model_c.predict(
+            np.column_stack([x_matrix, np.zeros(len(x_matrix), dtype=float)])
+        )
         imputed_treated_effect = outcome - y0_hat
         imputed_control_effect = y1_hat - outcome
 
@@ -305,4 +347,7 @@ class XMetaLearner(CATEModel):
 
         x_matrix = _validate_prediction_frame(x, self._covariates, name="x")
         x_matrix = np.column_stack([x_matrix, np.ones(len(x_matrix), dtype=float)])
-        return self.effect_model_t.predict(x_matrix) * 0.5 + self.effect_model_c.predict(x_matrix) * 0.5
+        return (
+            self.effect_model_t.predict(x_matrix) * 0.5
+            + self.effect_model_c.predict(x_matrix) * 0.5
+        )

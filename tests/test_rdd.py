@@ -67,7 +67,9 @@ def test_local_linear_rdd_input_validation() -> None:
         )
 
     with pytest.raises(ValueError, match="Missing required columns"):
-        local_linear_rdd(pd.DataFrame({"running": [0, 1], "treatment": [0, 1]}), outcome_col="outcome")
+        local_linear_rdd(
+            pd.DataFrame({"running": [0, 1], "treatment": [0, 1]}), outcome_col="outcome"
+        )
 
     with pytest.raises(ValueError, match="must be numeric"):
         local_linear_rdd(
@@ -82,9 +84,7 @@ def test_local_linear_rdd_input_validation() -> None:
 
     with pytest.raises(ValueError, match="binary"):
         local_linear_rdd(
-            pd.DataFrame(
-                {"running": [0.0, 1.0], "outcome": [1.0, 2.0], "treatment": [0.0, 2.0]}
-            )
+            pd.DataFrame({"running": [0.0, 1.0], "outcome": [1.0, 2.0], "treatment": [0.0, 2.0]})
         )
 
     with pytest.raises(ValueError, match="must be a finite real number."):
@@ -97,10 +97,14 @@ def test_local_linear_rdd_input_validation() -> None:
         local_linear_rdd(make_sharp_rdd_data(n=50, seed=4).data, cutoff=True)
 
     with pytest.raises(TypeError, match="bandwidth_grid must be a sequence of numeric bandwidths."):
-        rdd_bandwidth_sensitivity(make_sharp_rdd_data(n=100, seed=4).data, bandwidth_grid="bad-grid")
+        rdd_bandwidth_sensitivity(
+            make_sharp_rdd_data(n=100, seed=4).data, bandwidth_grid="bad-grid"
+        )
 
     with pytest.raises(TypeError, match="bandwidth_grid must be a sequence of numeric bandwidths."):
-        rdd_bandwidth_sensitivity(make_sharp_rdd_data(n=100, seed=5).data, bandwidth_grid=[1.0, True])
+        rdd_bandwidth_sensitivity(
+            make_sharp_rdd_data(n=100, seed=5).data, bandwidth_grid=[1.0, True]
+        )
 
     with pytest.raises(ValueError, match="all bandwidths must be finite positive values."):
         rdd_bandwidth_sensitivity(

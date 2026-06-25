@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 
 from causal_inference_lab.data_generators import make_confounded_binary_treatment
-from causal_inference_lab.matching import matching_balance_table, nearest_neighbour_matching, propensity_score_matching
+from causal_inference_lab.matching import (
+    matching_balance_table,
+    nearest_neighbour_matching,
+    propensity_score_matching,
+)
 
 
 def test_propensity_score_matching_reduces_covariate_imbalance() -> None:
@@ -54,11 +58,15 @@ def test_matching_raises_for_invalid_matching_inputs() -> None:
     with pytest.raises(ValueError, match="n_neighbors must be an integer >= 1."):
         nearest_neighbour_matching(data=dataset.data, covariates=covariates, n_neighbors=0)
 
-    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
+    with pytest.raises(
+        TypeError, match="covariates must be a sequence of column names, not a string."
+    ):
         nearest_neighbour_matching(data=dataset.data, covariates="x1")  # type: ignore[arg-type]
 
     with pytest.raises(TypeError, match="treatment_col must be a string."):
-        nearest_neighbour_matching(data=dataset.data, covariates=["x1", "x2", "x3"], treatment_col=1)  # type: ignore[arg-type]
+        nearest_neighbour_matching(
+            data=dataset.data, covariates=["x1", "x2", "x3"], treatment_col=1
+        )  # type: ignore[arg-type]
 
     with pytest.raises(TypeError, match="treatment_col must be a string."):
         propensity_score_matching(data=dataset.data, covariates=["x1", "x2", "x3"], treatment_col=1)  # type: ignore[arg-type]
@@ -112,14 +120,15 @@ def test_propensity_score_matching_validates_propensity_scores() -> None:
     non_finite_scores = np.ones(len(data), dtype=float)
     non_finite_scores[0] = np.inf
     with pytest.raises(ValueError, match="propensity_scores must be finite."):
-        propensity_score_matching(data=data, covariates=covariates, propensity_scores=non_finite_scores)
+        propensity_score_matching(
+            data=data, covariates=covariates, propensity_scores=non_finite_scores
+        )
 
 
 def test_matching_balance_table_validates_inputs() -> None:
     dataset = make_confounded_binary_treatment(n=150, seed=21)
     data = dataset.data
     covariates = ["x1", "x2", "x3"]
-    result = nearest_neighbour_matching(data=data, covariates=covariates)
 
     with pytest.raises(TypeError, match="matched_data must be a pandas DataFrame."):
         matching_balance_table(data=data, covariates=covariates, matched_data=[])  # type: ignore[arg-type]
@@ -149,5 +158,7 @@ def test_matching_accepts_numpy_integer_hyperparameters() -> None:
     )
     assert combined_result.effect.n_observations >= 2
 
-    ps_result = propensity_score_matching(data=data, covariates=covariates, random_state=np.int64(3))
+    ps_result = propensity_score_matching(
+        data=data, covariates=covariates, random_state=np.int64(3)
+    )
     assert ps_result.effect.n_observations >= 2

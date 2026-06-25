@@ -36,9 +36,13 @@ class CausalReport:
     def to_markdown(self) -> str:
         """Render the report as Markdown with no hidden assumptions."""
 
-        diagnostics = ("\n".join(f"- {name}: {value}" for name, value in sorted(self.diagnostics.items())))
-        uncertainty = ("\n".join(f"- {name}: {value}" for name, value in sorted(self.uncertainty.items())))
-        results = ("\n".join(f"- {name}: {value}" for name, value in sorted(self.results.items())))
+        diagnostics = "\n".join(
+            f"- {name}: {value}" for name, value in sorted(self.diagnostics.items())
+        )
+        uncertainty = "\n".join(
+            f"- {name}: {value}" for name, value in sorted(self.uncertainty.items())
+        )
+        results = "\n".join(f"- {name}: {value}" for name, value in sorted(self.results.items()))
         assumptions = "\n".join(f"- {item}" for item in self.identification_assumptions)
         limitations = "\n".join(f"- {item}" for item in self.limitations)
 
@@ -86,5 +90,5 @@ def _validate_report_map(mapping: dict[str, Any], name: str) -> None:
 
     if not isinstance(mapping, dict):
         raise TypeError(f"{name} must be a dictionary.")
-    if not all(isinstance(key, str) and key.strip() for key in mapping.keys()):
+    if not all(isinstance(key, str) and key.strip() for key in mapping):
         raise TypeError(f"{name} must have non-empty string keys.")

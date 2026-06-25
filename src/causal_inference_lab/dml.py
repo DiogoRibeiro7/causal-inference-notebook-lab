@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import numbers
-from typing import Sequence
+from collections.abc import Sequence
 
 import numpy as np
 import pandas as pd
@@ -44,7 +44,11 @@ def _validate_data_inputs(
     if len(set(covariate_list)) != len(covariate_list):
         raise ValueError("covariates must be unique.")
 
-    missing = [column for column in [treatment_col, outcome_col, *covariate_list] if column not in data.columns]
+    missing = [
+        column
+        for column in [treatment_col, outcome_col, *covariate_list]
+        if column not in data.columns
+    ]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
@@ -158,7 +162,9 @@ def double_machine_learning_ate(
     residual_y_arr = np.asarray(residual_y, dtype=float)
     denominator = float(np.dot(residual_t_arr, residual_t_arr))
     if denominator == 0.0:
-        raise ValueError("Residualized treatment variance is zero; check overlap and model specification.")
+        raise ValueError(
+            "Residualized treatment variance is zero; check overlap and model specification."
+        )
 
     ate = float(np.dot(residual_t_arr, residual_y_arr) / denominator)
 

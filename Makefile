@@ -1,9 +1,9 @@
-.PHONY: install test lint typecheck lab notebooks clean
+.PHONY: install test lint typecheck ci lab notebooks clean
 
-NOTEBOOKS_FAST = \\
-\tnotebooks/00_project_overview.ipynb \\
-\tnotebooks/01_confounding_propensity_scores.ipynb \\
-\tnotebooks/02_doubly_robust_aipw.ipynb
+NOTEBOOKS_FAST = \
+	notebooks/00_project_overview.ipynb \
+	notebooks/01_confounding_propensity_scores.ipynb \
+	notebooks/02_doubly_robust_aipw.ipynb
 
 install:
 	pip install -e ".[dev]"
@@ -27,8 +27,8 @@ lab:
 	jupyter lab
 
 notebooks:
-	for nb in $(NOTEBOOKS_FAST); do \\
-		MPLBACKEND=Agg jupyter nbconvert --to notebook --execute $$nb --inplace; \\
+	for nb in $(NOTEBOOKS_FAST); do \
+		MPLBACKEND=Agg jupyter nbconvert --to notebook --execute $$nb --inplace; \
 	done
 
 clean:

@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from numbers import Integral, Real
 from dataclasses import dataclass
+from numbers import Integral, Real
 from typing import Any
 
 import numpy as np
@@ -103,7 +103,7 @@ def _validate_confounder_strength_grid(strength_grid: Sequence[float]) -> list[f
     if not strengths:
         raise ValueError("confounder_strength_grid must not be empty.")
 
-    numeric_strengths = []
+    numeric_strengths: list[float] = []
     for strength in strengths:
         if isinstance(strength, bool) or not isinstance(strength, Real):
             raise ValueError("confounder_strength_grid must contain numeric values.")

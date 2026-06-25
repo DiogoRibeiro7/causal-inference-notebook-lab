@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from numbers import Real
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
+from numbers import Real
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from sklearn.base import RegressorMixin
-from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.utils.validation import check_is_fitted
 
 

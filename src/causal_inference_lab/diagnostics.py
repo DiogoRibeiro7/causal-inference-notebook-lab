@@ -190,7 +190,9 @@ def ipw_weights(
     covariate_list = _validate_covariates(data, covariates)
     treated_mask = _validate_treatment_column(data, treatment_col=treatment_col)
     treatment = treated_mask.astype(float)
-    propensity = estimate_propensity_scores(data, covariate_list, treatment_col=treatment_col, clip=clip)
+    propensity = estimate_propensity_scores(
+        data, covariate_list, treatment_col=treatment_col, clip=clip
+    )
     return treatment / propensity + (1.0 - treatment) / (1.0 - propensity)
 
 

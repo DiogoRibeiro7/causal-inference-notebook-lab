@@ -41,7 +41,9 @@ def test_diagnostics_balance_table_input_validation() -> None:
     with pytest.raises(TypeError, match="data must be a pandas DataFrame."):
         balance_table("bad", covariates=["x1", "x2"])  # type: ignore[arg-type]
 
-    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
+    with pytest.raises(
+        TypeError, match="covariates must be a sequence of column names, not a string."
+    ):
         balance_table(data, covariates="x1")  # type: ignore[arg-type]
 
     with pytest.raises(ValueError, match="covariates must not be empty."):
@@ -51,7 +53,9 @@ def test_diagnostics_balance_table_input_validation() -> None:
 def test_diagnostics_ipw_weights_input_validation() -> None:
     data = make_confounded_binary_treatment(n=80, seed=5).data.copy()
 
-    with pytest.raises(TypeError, match="covariates must be a sequence of column names, not a string."):
+    with pytest.raises(
+        TypeError, match="covariates must be a sequence of column names, not a string."
+    ):
         ipw_weights(data, covariates="x1")  # type: ignore[arg-type]
 
     weights = ipw_weights(data, covariates=["x1", "x2", "x3"], clip=np.float64(0.02))

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Sequence
+from collections.abc import Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -154,8 +154,8 @@ def plot_did_trends(
     _validate_numeric_array(data[outcome_col].to_numpy(), f"{outcome_col}")
 
     summary = (
-        data.groupby([time_col, group_col], as_index=False)[outcome_col]
-        .mean()
+        data.groupby([time_col, group_col], as_index=False)
+        .agg({outcome_col: "mean"})
         .sort_values([group_col, time_col])
     )
 

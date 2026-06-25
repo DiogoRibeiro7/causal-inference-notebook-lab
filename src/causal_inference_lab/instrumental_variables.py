@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -105,7 +105,9 @@ def _validate_iv_inputs(
         try:
             data[covariate].astype(float).to_numpy(dtype=float)
         except (TypeError, ValueError) as exc:
-            raise ValueError(f"control covariate '{covariate}' must be numeric and finite.") from exc
+            raise ValueError(
+                f"control covariate '{covariate}' must be numeric and finite."
+            ) from exc
 
     return covariate_list
 

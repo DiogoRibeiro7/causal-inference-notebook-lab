@@ -7,13 +7,18 @@ from causal_inference_lab.data_generators import (
     make_heterogeneous_treatment_data,
     make_iv_data,
 )
+from causal_inference_lab.difference_in_differences import (
+    DifferenceInDifferencesResult,
+    difference_in_differences,
+)
+from causal_inference_lab.dml import double_machine_learning_ate
 from causal_inference_lab.estimators import (
     aipw_ate,
     difference_in_means,
     g_computation_ate,
     ipw_ate,
 )
-from causal_inference_lab.dml import double_machine_learning_ate
+from causal_inference_lab.instrumental_variables import IVResult, instrumental_variables_ate
 from causal_inference_lab.matching import (
     MatchingResult,
     matching_balance_table,
@@ -26,8 +31,6 @@ from causal_inference_lab.meta_learners import (
     TMetaLearner,
     XMetaLearner,
 )
-from causal_inference_lab.difference_in_differences import DifferenceInDifferencesResult, difference_in_differences
-from causal_inference_lab.instrumental_variables import IVResult, instrumental_variables_ate
 from causal_inference_lab.rdd import (
     RDDResult,
     local_linear_rdd,

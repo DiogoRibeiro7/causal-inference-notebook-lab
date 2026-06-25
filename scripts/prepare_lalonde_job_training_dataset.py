@@ -11,7 +11,6 @@ from urllib.request import urlopen
 
 import pandas as pd
 
-
 DEFAULT_OUTPUT = Path("data") / "processed" / "lalonde_job_training.csv"
 DEFAULT_MANIFEST = Path("data") / "processed" / "lalonde_job_training_manifest.json"
 PUBLIC_URLS = [

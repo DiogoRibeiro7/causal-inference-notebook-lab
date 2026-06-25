@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import numbers
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -84,8 +84,7 @@ def fit_synthetic_control(
         treated_after = treated_data.loc[treated_data[treatment_col] == 1, time_col].to_numpy()
         if treated_after.size == 0:
             raise ValueError(
-                "Cannot infer pre_period_end because treated unit has no "
-                "treated periods."
+                "Cannot infer pre_period_end because treated unit has no treated periods."
             )
         pre_period_end = int(np.min(treated_after)) - 1
     else:
@@ -101,8 +100,7 @@ def fit_synthetic_control(
     panel = data.pivot_table(index=unit_col, columns=time_col, values=outcome_col, aggfunc="mean")
     if panel.isnull().values.any():
         raise ValueError(
-            "Panel data must have complete outcome observations for all "
-            "requested periods."
+            "Panel data must have complete outcome observations for all requested periods."
         )
 
     control_units = [unit for unit in panel.index if unit != treated_unit]

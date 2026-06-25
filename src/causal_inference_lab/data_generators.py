@@ -339,11 +339,7 @@ def make_synthetic_control_data(
         for time in range(n_periods):
             treatment = int(unit == treated_unit and time >= pre_periods)
             outcome = (
-                3.0
-                + unit_effects[unit]
-                + 0.25 * time
-                + effect * treatment
-                + rng.normal(0.0, 0.8)
+                3.0 + unit_effects[unit] + 0.25 * time + effect * treatment + rng.normal(0.0, 0.8)
             )
             rows.append(
                 {

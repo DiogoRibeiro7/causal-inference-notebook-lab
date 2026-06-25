@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from numbers import Real
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
 import pandas.api.types as ptypes
+import statsmodels.api as sm
 
 
 @dataclass(frozen=True)
@@ -106,7 +106,9 @@ def local_linear_rdd(
     y = subset[outcome_col].to_numpy(dtype=float)
 
     interaction = x * t
-    design = pd.DataFrame({"intercept": np.ones_like(y), "running": x, "treatment": t, "interaction": interaction})
+    design = pd.DataFrame(
+        {"intercept": np.ones_like(y), "running": x, "treatment": t, "interaction": interaction}
+    )
     model = sm.OLS(y, design).fit()
     estimate = float(model.params["treatment"])
     std_error = float(model.bse["treatment"])
@@ -136,7 +138,10 @@ def rdd_bandwidth_sensitivity(
 
     if len(bandwidth_list) == 0:
         raise ValueError("bandwidth_grid must not be empty.")
-    if any(isinstance(bandwidth, bool) or not isinstance(bandwidth, Real) for bandwidth in bandwidth_list):
+    if any(
+        isinstance(bandwidth, bool) or not isinstance(bandwidth, Real)
+        for bandwidth in bandwidth_list
+    ):
         raise TypeError("bandwidth_grid must be a sequence of numeric bandwidths.")
 
     bandwidths = [float(bandwidth) for bandwidth in bandwidth_list]

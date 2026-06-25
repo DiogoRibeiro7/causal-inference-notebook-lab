@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import numbers
+from collections.abc import Hashable, Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -178,10 +178,12 @@ def _build_matched_data(
     if len(control_indices) == 0:
         raise ValueError("No control units available for matching.")
 
-    matched_rows: list[dict[str, object]] = []
+    matched_rows: list[dict[Hashable, object]] = []
     dropped = 0
     for treated_index in treated_indices:
-        control_distances = np.abs(covariate_matrix[control_indices] - covariate_matrix[treated_index])
+        control_distances = np.abs(
+            covariate_matrix[control_indices] - covariate_matrix[treated_index]
+        )
         matched_control_position = _select_matches_with_tiebreak(
             control_distances,
             control_indices,
@@ -201,7 +203,9 @@ def _build_matched_data(
         matched_rows.extend((treated_row, control_row))
 
     if not matched_rows:
-        raise ValueError("Matching failed: every treated unit was unmatched with the current settings.")
+        raise ValueError(
+            "Matching failed: every treated unit was unmatched with the current settings."
+        )
 
     matched_data = pd.DataFrame(matched_rows).reset_index(drop=True)
     return matched_data, dropped
@@ -254,14 +258,18 @@ def propensity_score_matching(
         MatchingResult with matched rows, ATT estimate, and dropped units.
     """
 
-    covariate_list = _validate_matching_inputs(data, covariates, treatment_col=treatment_col, outcome_col=outcome_col)
+    covariate_list = _validate_matching_inputs(
+        data, covariates, treatment_col=treatment_col, outcome_col=outcome_col
+    )
     _validate_caliper(caliper)
     _validate_random_state(random_state)
 
     if propensity_scores is None:
         from causal_inference_lab.estimators import estimate_propensity_scores
 
-        propensity_scores = estimate_propensity_scores(data, covariate_list, treatment_col=treatment_col)
+        propensity_scores = estimate_propensity_scores(
+            data, covariate_list, treatment_col=treatment_col
+        )
 
     propensity_scores = _validate_propensity_scores(propensity_scores, len(data))
     treatment_mask = _prepare_treatment_mask(data, treatment_col)
@@ -274,7 +282,11 @@ def propensity_score_matching(
         caliper=caliper,
         random_state=random_state,
     )
-    estimate = float(_estimate_att_from_matched_pairs(matched_data, treatment_col=treatment_col, outcome_col=outcome_col))
+    estimate = float(
+        _estimate_att_from_matched_pairs(
+            matched_data, treatment_col=treatment_col, outcome_col=outcome_col
+        )
+    )
 
     return MatchingResult(
         effect=EffectEstimate(
@@ -310,7 +322,9 @@ def nearest_neighbour_matching(
         MatchingResult with matched rows, ATT estimate, and dropped units.
     """
 
-    covariate_list = _validate_matching_inputs(data, covariates, treatment_col=treatment_col, outcome_col=outcome_col)
+    covariate_list = _validate_matching_inputs(
+        data, covariates, treatment_col=treatment_col, outcome_col=outcome_col
+    )
     if isinstance(n_neighbors, bool) or not isinstance(n_neighbors, numbers.Integral):
         raise ValueError("n_neighbors must be an integer >= 1.")
     if n_neighbors < 1:
@@ -335,9 +349,11 @@ def nearest_neighbour_matching(
     matcher.fit(control_matrix)
     distances, nearest = matcher.kneighbors(treated_matrix, return_distance=True)
 
-    matched_rows: list[dict[str, object]] = []
+    matched_rows: list[dict[Hashable, object]] = []
     dropped = 0
-    for treated_index, neighbor_indices, neighbor_distances in zip(treated_indices, nearest, distances):
+    for treated_index, neighbor_indices, neighbor_distances in zip(
+        treated_indices, nearest, distances, strict=False
+    ):
         if caliper is not None and neighbor_distances[0] > caliper:
             dropped += 1
             continue
@@ -350,10 +366,16 @@ def nearest_neighbour_matching(
         matched_rows.extend((treated_row, control_row))
 
     if not matched_rows:
-        raise ValueError("Matching failed: every treated unit was unmatched with the current settings.")
+        raise ValueError(
+            "Matching failed: every treated unit was unmatched with the current settings."
+        )
 
     matched_data = pd.DataFrame(matched_rows).reset_index(drop=True)
-    estimate = float(_estimate_att_from_matched_pairs(matched_data, treatment_col=treatment_col, outcome_col=outcome_col))
+    estimate = float(
+        _estimate_att_from_matched_pairs(
+            matched_data, treatment_col=treatment_col, outcome_col=outcome_col
+        )
+    )
 
     return MatchingResult(
         effect=EffectEstimate(

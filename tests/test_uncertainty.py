@@ -55,7 +55,10 @@ def test_bootstrap_ate_is_deterministic_and_returns_bounds() -> None:
     assert np.isfinite(combined_numpy_result.estimate)
     assert np.isfinite(combined_numpy_covariate_result.estimate)
     assert (
-        0.0 <= first.lower <= first.estimate <= first.upper
+        0.0
+        <= first.lower
+        <= first.estimate
+        <= first.upper
         <= first.estimate + abs(first.estimate) + 1.0
     )
     assert first.n_observations == len(data)

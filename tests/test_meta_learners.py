@@ -11,9 +11,15 @@ def test_meta_learners_estimate_ate_on_synthetic_data() -> None:
     data = dataset.data
     covariates = ["age", "risk_score", "prior_usage"]
 
-    s_learner = SMetaLearner().fit(data, covariates, treatment_col="treatment", outcome_col="outcome")
-    t_learner = TMetaLearner().fit(data, covariates, treatment_col="treatment", outcome_col="outcome")
-    x_learner = XMetaLearner().fit(data, covariates, treatment_col="treatment", outcome_col="outcome")
+    s_learner = SMetaLearner().fit(
+        data, covariates, treatment_col="treatment", outcome_col="outcome"
+    )
+    t_learner = TMetaLearner().fit(
+        data, covariates, treatment_col="treatment", outcome_col="outcome"
+    )
+    x_learner = XMetaLearner().fit(
+        data, covariates, treatment_col="treatment", outcome_col="outcome"
+    )
 
     s_ate = s_learner.estimate_ate(data.loc[:, covariates])
     t_ate = t_learner.estimate_ate(data.loc[:, covariates])
@@ -26,15 +32,15 @@ def test_meta_learners_estimate_ate_on_synthetic_data() -> None:
     assert len(s_learner.predict_cate(data.loc[:, covariates])) == len(data)
     assert np.allclose(
         s_learner.predict_cate(data.loc[:, covariates]),
-        SMetaLearner().fit(data, covariates, treatment_col="treatment", outcome_col="outcome").predict_cate(
-            data.loc[:, covariates]
-        ),
+        SMetaLearner()
+        .fit(data, covariates, treatment_col="treatment", outcome_col="outcome")
+        .predict_cate(data.loc[:, covariates]),
     )
     assert np.allclose(
         t_learner.predict_cate(data.loc[:, covariates]),
-        TMetaLearner().fit(data, covariates, treatment_col="treatment", outcome_col="outcome").predict_cate(
-            data.loc[:, covariates]
-        ),
+        TMetaLearner()
+        .fit(data, covariates, treatment_col="treatment", outcome_col="outcome")
+        .predict_cate(data.loc[:, covariates]),
     )
 
     assert abs(s_ate - dataset.true_ate) < 1.0
