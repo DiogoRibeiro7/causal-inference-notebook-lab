@@ -50,7 +50,7 @@ def test_data_generators_validate_synthetic_control_inputs() -> None:
         effect=np.float64(2.5),
         seed=np.int64(5),
     )
-    assert synthetic.data["treated_unit"].sum() == 1
+    assert synthetic.data.loc[synthetic.data["treated_unit"] == 1, "unit"].nunique() == 1
     assert np.isfinite(synthetic.true_ate)
 
     integer_effect_synthetic = generators.make_synthetic_control_data(

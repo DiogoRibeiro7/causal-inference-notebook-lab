@@ -109,9 +109,10 @@ def plot_balance_table(balance: pd.DataFrame) -> plt.Figure:
 
     _validate_data_frame(balance)
 
-    required = {"covariate", "smd"}
-    if not required.issubset(balance.columns):
-        raise ValueError(f"balance must contain columns: {required}")
+    required = ("covariate", "smd")
+    if not set(required).issubset(balance.columns):
+        formatted = ", ".join(repr(column) for column in required)
+        raise ValueError(f"balance must contain columns: {{{formatted}}}")
 
     smd = _validate_numeric_array(balance["smd"].to_numpy(), "smd values")
 

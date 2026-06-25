@@ -139,11 +139,11 @@ def bootstrap_ate(
         BootstrapResult with point estimate, interval bounds, standard error, and sample count.
     """
 
-    n_bootstrap_samples = int(n_bootstrap_samples)
-    seed = int(seed)
     _validate_common_inputs(data, n_bootstrap_samples, confidence_level)
     _validate_seed(seed)
     _validate_estimator(estimator)
+    n_bootstrap_samples = int(n_bootstrap_samples)
+    seed = int(seed)
     if n_bootstrap_samples < 2:
         raise ValueError("n_bootstrap_samples must be at least 2 to estimate a standard error.")
     if covariates is not None:

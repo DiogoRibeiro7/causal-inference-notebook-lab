@@ -127,15 +127,16 @@ def test_omitted_confounder_simulation_validates_input_grid() -> None:
 
 def test_estimators_raises_for_invalid_treatment_and_outcome_inputs() -> None:
     dataset = make_confounded_binary_treatment(n=300, seed=7)
-    data = dataset.data.copy()
 
-    data.loc[data.index[:1], "treatment"] = 2
+    bad_treatment = dataset.data.copy()
+    bad_treatment.loc[bad_treatment.index[:1], "treatment"] = 2
     with pytest.raises(ValueError, match="Treatment must be binary and encoded as 0/1."):
-        difference_in_means(data, "treatment", "outcome")
+        difference_in_means(bad_treatment, "treatment", "outcome")
 
-    data.loc[data.index[0], "outcome"] = np.nan
+    bad_outcome = dataset.data.copy()
+    bad_outcome.loc[bad_outcome.index[0], "outcome"] = np.nan
     with pytest.raises(ValueError, match="outcome must be numeric and finite."):
-        ipw_ate(data, ["x1", "x2", "x3"], outcome_col="outcome")
+        ipw_ate(bad_outcome, ["x1", "x2", "x3"], outcome_col="outcome")
 
     with pytest.raises(TypeError, match="data must be a pandas DataFrame."):
         ipw_ate("not-a-dataframe", ["x1", "x2", "x3"])  # type: ignore[arg-type]
@@ -160,5 +161,5 @@ def test_estimator_helpers_validate_numeric_parameters() -> None:
     with pytest.raises(ValueError, match="clip must be between 0 and 0.5."):
         estimate_propensity_scores(data, ["x1", "x2", "x3"], clip=1.0)
 
-    with pytest.raises(ValueError, match="columns must be a sequence of column names, not a string."):
+    with pytest.raises(TypeError, match="columns must be a sequence of column names, not a string."):
         fit_propensity_model(data, covariates="x1")  # type: ignore[arg-type]

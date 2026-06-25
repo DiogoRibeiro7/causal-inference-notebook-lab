@@ -128,6 +128,8 @@ def fit_propensity_model(
 ) -> LogisticRegression:
     """Fit a logistic regression propensity score model."""
 
+    if isinstance(covariates, str):
+        raise TypeError("columns must be a sequence of column names, not a string.")
     _validate_columns(data, [treatment_col, *covariates])
     _validate_binary_treatment(data[treatment_col])
     _validate_non_missing_numeric_outcome(data[treatment_col], "treatment")

@@ -169,7 +169,7 @@ def instrumental_variables_ate(
     treatment_index = "treatment_hat"
     estimate = float(second_stage.params[treatment_index])
 
-    first_stage_f_stat = float(first_stage.t_test(f"{instrument_col} = 0").fvalue)
+    first_stage_f_stat = float(first_stage.f_test(f"{instrument_col} = 0").fvalue)
     weak = first_stage_f_stat < 10.0
 
     effect = EffectEstimate(

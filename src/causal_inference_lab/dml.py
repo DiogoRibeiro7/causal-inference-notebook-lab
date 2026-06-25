@@ -133,19 +133,19 @@ def double_machine_learning_ate(
 
     for train_idx, test_idx in folds.split(x):
         x_train = x[train_idx]
-        y_train = y[train_idx]
+        y_train = outcome[train_idx]
         d_train = treatment[train_idx]
         x_test = x[test_idx]
         d_test = treatment[test_idx]
-        y_test = y[test_idx]
+        y_test = outcome[test_idx]
 
         outcome_fold = clone(outcome_base)
         treatment_fold = clone(treatment_base)
 
-        outcome_features_train = np.column_stack((x_train, d_train))
-        outcome_features_test = np.column_stack((x_test, d_test))
-        outcome_fold.fit(outcome_features_train, y_train)
-        y_hat = outcome_fold.predict(outcome_features_test)
+        # Robinson partialling-out: the outcome nuisance estimates E[Y | X] only.
+        # Including treatment here would absorb the effect we are trying to estimate.
+        outcome_fold.fit(x_train, y_train)
+        y_hat = outcome_fold.predict(x_test)
 
         treatment_fold.fit(x_train, d_train)
         e_hat = treatment_fold.predict_proba(x_test)[:, 1]

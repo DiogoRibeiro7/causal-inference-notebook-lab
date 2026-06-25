@@ -13,9 +13,11 @@ def test_instrumental_variables_recover_ate_better_than_ols() -> None:
     data = dataset.data
 
     iv_result = instrumental_variables_ate(data)
+    # The OLS baseline may only adjust for the observed covariate; the confounder is
+    # unobserved, so OLS stays biased and IV should recover the effect more accurately.
     ols_result = ols_treatment_effect(
         data,
-        covariates=["x", "hidden_confounder"],
+        covariates=["x"],
         treatment_col="treatment",
         outcome_col="outcome",
     )

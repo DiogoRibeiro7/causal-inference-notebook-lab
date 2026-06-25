@@ -81,7 +81,7 @@ def test_difference_in_differences_input_validation() -> None:
         bad_post["post"] = 1
         difference_in_differences(bad_post)
 
-    with pytest.raises(ValueError, match="group_col must be encoded as 0/1"):
+    with pytest.raises(ValueError, match="group_col must be binary and encoded as 0/1"):
         bad_group = data.copy()
-        bad_group["treated_group"] = 2
+        bad_group.loc[bad_group["treated_group"] == 1, "treated_group"] = 2
         difference_in_differences(bad_group)

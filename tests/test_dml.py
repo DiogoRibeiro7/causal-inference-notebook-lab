@@ -24,7 +24,7 @@ def test_dml_estimate_close_to_true_ate_on_synthetic_data() -> None:
 
 def test_dml_raises_for_invalid_inputs() -> None:
     dataset = make_confounded_binary_treatment(n=500, seed=7)
-    data = dataset.data
+    data = dataset.data.copy()
     data.loc[data.index[:1], "treatment"] = 2
     covariates = ["x1", "x2", "x3"]
 
