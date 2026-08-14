@@ -1,6 +1,6 @@
 # Causal Inference Notebook Lab
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.CONCEPT_DOI.svg)](https://doi.org/10.5281/zenodo.CONCEPT_DOI)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21936500.svg)](https://doi.org/10.5281/zenodo.21936500)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A notebook-first causal inference portfolio focused on transparent causal workflows.
@@ -153,33 +153,31 @@ This repository is intentionally explicit about uncertainty and assumptions to a
 
 ## Citation and archiving
 
-Releases are archived on Zenodo and receive a DOI. Deposit metadata lives in
-[.zenodo.json](.zenodo.json); human/GitHub-facing citation metadata lives in
-[CITATION.cff](CITATION.cff). Keep `version` in sync across `CITATION.cff`,
-`.zenodo.json`, and `pyproject.toml` when tagging a release.
+Releases are archived on Zenodo. Deposit metadata lives in [.zenodo.json](.zenodo.json);
+human/GitHub-facing citation metadata lives in [CITATION.cff](CITATION.cff).
 
-Cite the specific version and commit used for reproduction:
+Two DOIs exist. The **concept DOI** always resolves to the newest release and is the one
+to cite when the exact version does not matter:
+
+- Concept DOI: [10.5281/zenodo.21936500](https://doi.org/10.5281/zenodo.21936500)
+- v0.1.0: [10.5281/zenodo.21936501](https://doi.org/10.5281/zenodo.21936501)
+
+For reproduction, cite the specific version and commit used:
 
 ```bibtex
 @software{ribeiro_causal_inference_notebook_lab,
   author  = {Ribeiro, Diogo},
   title   = {Causal Inference Notebook Lab},
   version = {0.1.0},
-  doi     = {10.5281/zenodo.CONCEPT_DOI},
+  doi     = {10.5281/zenodo.21936501},
   url     = {https://github.com/DiogoRibeiro7/causal-inference-notebook-lab}
 }
 ```
 
-### Enabling the Zenodo archive (one-time)
+### Cutting a new release
 
-1. Sign in at [zenodo.org](https://zenodo.org) with the GitHub account, then open
-   **Account → GitHub** and flip the switch on `DiogoRibeiro7/causal-inference-notebook-lab`.
-2. Push a tag and publish a GitHub release (for example `v0.1.0`). Zenodo picks up the
-   webhook, mints a DOI, and reads `.zenodo.json` for the deposit metadata.
-3. Zenodo issues two DOIs: a **concept DOI** that always resolves to the latest version,
-   and a **version DOI** for that specific release. Replace every `CONCEPT_DOI` placeholder
-   above (badge, badge link, and BibTeX) with the concept DOI suffix.
-4. Later releases inherit the metadata automatically; only the version fields need bumping.
-
-The badge stays broken until step 3 is done, which is the intended signal that the first
-release has not been archived yet.
+1. Bump `version` in `pyproject.toml`, `CITATION.cff`, and `.zenodo.json` together.
+2. Tag and publish a GitHub release. The Zenodo webhook fires on the `released` event,
+   mints a version DOI, and re-reads `.zenodo.json` for the deposit metadata.
+3. Update the version DOI in the list above and in the BibTeX block. The badge tracks the
+   concept DOI and does not change.

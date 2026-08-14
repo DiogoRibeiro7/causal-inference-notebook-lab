@@ -9,7 +9,16 @@ authors:
     email: dfr@esmad.ipp.pt
     affiliation: "ESMAD - Escola Superior de Media Arte e Design, Instituto Politecnico do Porto"
 version: "0.1.0"
+date-released: "2026-08-14"
 license: MIT
+doi: "10.5281/zenodo.21936500"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.21936500"
+    description: "Concept DOI resolving to the latest release"
+  - type: doi
+    value: "10.5281/zenodo.21936501"
+    description: "Version DOI for v0.1.0"
 repository-code: "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab"
 keywords:
   - causal-inference
