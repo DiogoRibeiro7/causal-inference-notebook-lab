@@ -1,5 +1,9 @@
 """Utilities for a notebook-first causal inference portfolio project."""
 
+# Single source of the version. pyproject.toml reads this attribute, and
+# tests/test_metadata.py asserts CITATION.cff and .zenodo.json agree with it.
+__version__ = "0.1.0"
+
 from causal_inference_lab.data_generators import (
     SyntheticDataset,
     make_confounded_binary_treatment,
@@ -41,6 +45,7 @@ from causal_inference_lab.synthetic_control import SyntheticControlResult, fit_s
 from causal_inference_lab.uncertainty import BootstrapResult, bootstrap_ate
 
 __all__ = [
+    "__version__",
     "SyntheticDataset",
     "make_confounded_binary_treatment",
     "make_heterogeneous_treatment_data",

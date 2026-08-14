@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    labels: ["dependencies", "ci"]
+    commit-message:
+      prefix: "chore"
+
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    labels: ["dependencies"]
+    commit-message:
+      prefix: "chore"
+    groups:
+      # Tooling moves fast and breaks CI in ways unrelated to the science;
+      # reviewing it as one PR a week is less noise than five.
+      dev-tooling:
+        patterns: ["ruff", "mypy", "pytest*", "pre-commit", "pandas-stubs", "nbstripout"]
+      docs:
+        patterns: ["mkdocs*", "mkdocstrings*", "pymdown-extensions"]
+      scientific-stack:
+        patterns: ["numpy", "pandas", "scipy", "scikit-learn", "statsmodels", "matplotlib", "networkx"]
