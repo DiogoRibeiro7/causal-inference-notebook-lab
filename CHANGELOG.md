@@ -10,6 +10,13 @@ Each released version is archived on Zenodo with its own DOI; see the
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.0] - 2026-08-14
+
+Repository maturity release. No estimator behaviour changed; everything here is
+scaffolding, tooling, and documentation around the existing science.
+
 ### Added
 
 - Contributor scaffolding: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`,
@@ -35,6 +42,14 @@ Each released version is archived on Zenodo with its own DOI; see the
 
 - Development dependencies now carry upper bounds. Unpinned tooling is what
   broke CI silently between June and August 2026.
+- CI bumped to `actions/checkout@v5` and `actions/setup-python@v6` with pip
+  caching, plus concurrency groups so superseded runs are cancelled.
+- Documentation is published to GitHub Pages from `main`.
+
+### Fixed
+
+- The issue chooser linked to GitHub Discussions, which is not enabled on this
+  repository.
 
 ## [0.1.0] - 2026-08-14
 
@@ -66,5 +81,6 @@ is [10.5281/zenodo.21936501](https://doi.org/10.5281/zenodo.21936501).
 - The mypy `python_version` pin, which made the 3.12 CI leg fail inside the
   numpy stubs before reaching project code.
 
-[Unreleased]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/releases/tag/v0.1.0
