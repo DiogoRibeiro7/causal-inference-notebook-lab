@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,18 @@ version = "0.1.0"
 description = "Notebook-first causal inference portfolio project with reusable Python source code."
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{ name = "Diogo Ribeiro" }]
+authors = [{ name = "Diogo Ribeiro", email = "dfr@esmad.ipp.pt" }]
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = [
+    "causal-inference",
+    "propensity-scores",
+    "doubly-robust",
+    "difference-in-differences",
+    "instrumental-variables",
+    "double-machine-learning",
+    "reproducible-research",
+]
 dependencies = [
     "numpy>=1.24",
     "pandas>=2.0",
@@ -20,6 +31,10 @@ dependencies = [
     "jupyterlab>=4.0",
     "ipykernel>=6.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab"
+ORCID = "https://orcid.org/0009-0001-2022-7072"
 
 [project.optional-dependencies]
 dev = [

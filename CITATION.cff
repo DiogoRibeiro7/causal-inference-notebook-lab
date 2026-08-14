@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this repository, cite the software version and commit used for reproduction."
+title: "Causal Inference Notebook Lab"
+type: software
+authors:
+  - family-names: Ribeiro
+    given-names: Diogo
+    orcid: "https://orcid.org/0009-0001-2022-7072"
+    email: dfr@esmad.ipp.pt
+    affiliation: "ESMAD - Escola Superior de Media Arte e Design, Instituto Politecnico do Porto"
+version: "0.1.0"
+license: MIT
+repository-code: "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab"
+keywords:
+  - causal-inference
+  - propensity-scores
+  - doubly-robust
+  - difference-in-differences
+  - instrumental-variables
+  - double-machine-learning
+  - regression-discontinuity
+  - synthetic-control
+  - reproducible-research
+abstract: >
+  Notebook-first causal inference lab separating reusable Python estimators from
+  analysis notebooks. Covers propensity-score adjustment, inverse probability
+  weighting, AIPW, matching, double machine learning, difference-in-differences,
+  instrumental variables, regression discontinuity, synthetic control,
+  heterogeneous treatment effects, bootstrap uncertainty, sensitivity analysis,
+  and policy targeting, with synthetic ground-truth data and a benchmark
+  Lalonde/NSW replication.
