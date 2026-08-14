@@ -1,0 +1,36 @@
+{
+  "title": "Causal Inference Notebook Lab",
+  "description": "<p>Notebook-first causal inference lab separating reusable Python estimators from analysis notebooks. Covers propensity-score adjustment, inverse probability weighting, AIPW, matching, double machine learning, difference-in-differences, instrumental variables, regression discontinuity, synthetic control, heterogeneous treatment effects, bootstrap uncertainty, sensitivity analysis, and policy targeting.</p><p>Each notebook states the causal question, treatment/outcome/covariates and unit of analysis, the estimand, identification assumptions, effect estimates, diagnostics, uncertainty, and limitations. Synthetic datasets with known ground truth support reproducible development, and a benchmark Lalonde/NSW replication is included.</p>",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "version": "0.1.0",
+  "language": "eng",
+  "creators": [
+    {
+      "name": "Ribeiro, Diogo",
+      "orcid": "0009-0001-2022-7072",
+      "affiliation": "ESMAD - Escola Superior de Media Arte e Design, Instituto Politecnico do Porto"
+    }
+  ],
+  "keywords": [
+    "causal inference",
+    "propensity scores",
+    "doubly robust estimation",
+    "difference-in-differences",
+    "instrumental variables",
+    "double machine learning",
+    "regression discontinuity",
+    "synthetic control",
+    "heterogeneous treatment effects",
+    "reproducible research"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab",
+      "relation": "isSupplementTo",
+      "scheme": "url",
+      "resource_type": "software"
+    }
+  ]
+}
