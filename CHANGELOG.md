@@ -15,7 +15,8 @@ Nothing yet.
 ## [0.2.0] - 2026-08-14
 
 Repository maturity release. No estimator behaviour changed; everything here is
-scaffolding, tooling, and documentation around the existing science.
+scaffolding, tooling, and documentation around the existing science. This
+version is [10.5281/zenodo.21939879](https://doi.org/10.5281/zenodo.21939879).
 
 ### Added
 
