@@ -59,10 +59,10 @@ ORCID = "https://orcid.org/0009-0001-2022-7072"
 # `.loc` form, and a numpy release shipped PEP 695 stubs the pinned mypy target
 # could not parse. Dependabot proposes the bumps; CI proves them.
 dev = [
-    "pytest>=7.4,<9",
+    "pytest>=7.4,<10",
     "pytest-cov>=5.0,<8",
     "ruff>=0.5,<1",
-    "mypy>=1.8,<2",
+    "mypy>=1.8,<3",
     "pandas-stubs>=2.0,<3",
     "pyyaml>=6.0,<7",
     "pre-commit>=3.7,<5",
