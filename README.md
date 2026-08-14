@@ -1,7 +1,16 @@
 # Causal Inference Notebook Lab
 
+[![CI](https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/actions/workflows/ci.yml)
+[![Docs](https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/actions/workflows/docs.yml/badge.svg)](https://diogoribeiro7.github.io/causal-inference-notebook-lab/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21936500.svg)](https://doi.org/10.5281/zenodo.21936500)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+**[Documentation](https://diogoribeiro7.github.io/causal-inference-notebook-lab/)** ·
+[Getting started](https://diogoribeiro7.github.io/causal-inference-notebook-lab/getting-started/) ·
+[Assumptions matrix](https://diogoribeiro7.github.io/causal-inference-notebook-lab/assumptions/) ·
+[API reference](https://diogoribeiro7.github.io/causal-inference-notebook-lab/api/)
 
 A notebook-first causal inference portfolio focused on transparent causal workflows.
 
@@ -51,18 +60,29 @@ causal-inference-notebook-lab/
 │   ├── 10_lalonde_job_training.ipynb
 │   └── 11_policy_targeting.ipynb
 ├── scripts/
-│   └── prepare_lalonde_job_training_dataset.py
+│   ├── prepare_lalonde_job_training_dataset.py
+│   └── build_docs_notebooks.py
 ├── src/
-│   └── causal_inference_lab/
-├── tests/
+│   └── causal_inference_lab/       # estimators, diagnostics, generators
+├── tests/                          # one module per source module
 ├── data/
-│   └── processed/
-├── docs/
-│   ├── linkedin_post.md
-│   └── project_summary.md
-├── README.md
+│   └── processed/                  # generated, not committed
+├── docs/                           # MkDocs site source
+│   ├── index.md
+│   ├── getting-started.md
+│   ├── choosing-an-estimator.md
+│   ├── assumptions.md
+│   ├── api/
+│   └── about/
+├── .github/workflows/
+│   ├── ci.yml                      # lint, typecheck, tests, fast notebooks
+│   ├── docs.yml                    # build and deploy to GitHub Pages
+│   └── notebooks-nightly.yml       # execute all twelve, nightly
+├── CONTRIBUTING.md
+├── CHANGELOG.md
+├── mkdocs.yml
 ├── Makefile
-└── .github/workflows/ci.yml
+└── README.md
 ```
 
 ## Setup
@@ -83,16 +103,26 @@ python -m venv .venv
 pip install -e ".[dev]"
 ```
 
+Install the `docs` extra as well — `pip install -e ".[dev,docs]"` — to build the
+documentation site locally.
+
 ## Local development
 
 ```bash
-make install   # install package + dev dependencies
-make lint      # formatting + linting
-make typecheck # mypy checks
-make test      # run unit tests
-make ci        # run lint/typecheck/tests together
-make notebooks # execute lightweight notebooks (00, 01, 02)
+make install        # package + dev dependencies
+make lint           # formatting + linting
+make typecheck      # mypy checks
+make test           # unit tests
+make coverage       # tests with branch coverage, enforcing the 80% floor
+make ci             # lint, typecheck, and tests together
+make notebooks      # execute the lightweight notebooks (00, 01, 02)
+make notebooks-all  # execute all twelve
+make docs           # serve the documentation site locally
 ```
+
+`pre-commit install` wires ruff, mypy, and notebook output stripping into your
+commits. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow and the
+definition of done for a new estimator.
 
 ## Benchmark data preparation
 
