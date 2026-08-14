@@ -112,11 +112,16 @@ def fit_synthetic_control(
     if len(pre_periods) == 0 or len(post_periods) == 0:
         raise ValueError("Need both pre- and post-treatment periods.")
 
-    treated_pre = panel.loc[treated_unit, pre_periods].to_numpy(dtype=float)
-    treated_post = panel.loc[treated_unit, post_periods].to_numpy(dtype=float)
+    # Select periods and units in two steps: the combined ``.loc[unit, periods]`` form is
+    # not expressible in pandas-stubs and degrades to a scalar type.
+    pre_panel = panel[pre_periods]
+    post_panel = panel[post_periods]
 
-    donor_pre = panel.loc[control_units, pre_periods].to_numpy(dtype=float)
-    donor_post = panel.loc[control_units, post_periods].to_numpy(dtype=float)
+    treated_pre = pre_panel.loc[[treated_unit]].to_numpy(dtype=float).ravel()
+    treated_post = post_panel.loc[[treated_unit]].to_numpy(dtype=float).ravel()
+
+    donor_pre = pre_panel.loc[control_units].to_numpy(dtype=float)
+    donor_post = post_panel.loc[control_units].to_numpy(dtype=float)
 
     n_donors = donor_pre.shape[0]
     init = np.repeat(1.0 / n_donors, n_donors)
