@@ -168,18 +168,31 @@ This saves `data/processed/lalonde_job_training.csv` and writes a small processi
 
 ## Causal workflow discipline in each notebook
 
-Each notebook states:
+Every analysis notebook carries the same eight sections, in order:
 
-- causal question
-- treatment, outcome, covariates, and unit of analysis
-- estimand
-- assumptions
-- effect estimates
-- diagnostics
-- uncertainty
-- limitations
+1. causal question
+2. data and design — treatment, outcome, covariates, unit of analysis
+3. estimand
+4. identification assumptions
+5. estimation
+6. diagnostics
+7. uncertainty
+8. limitations
 
-This repository is intentionally explicit about uncertainty and assumptions to avoid overclaiming causal results.
+This is enforced, not merely intended. [`tests/test_notebook_structure.py`](tests/test_notebook_structure.py)
+checks the sections are present and ordered, that every code cell is introduced
+by prose, that the estimand is named explicitly, and that results are
+interpreted rather than left as bare output. A notebook that drops its
+assumptions section fails CI.
+
+The tests check presence, not honesty — no test can tell you an assumptions
+section is candid. What they prevent is the silent drift that had left eight of
+the twelve notebooks below this standard before v0.3.0.
+
+The repository is deliberately explicit about uncertainty and assumptions to
+avoid overclaiming causal results. [Notebook 10](notebooks/10_lalonde_job_training.ipynb)
+is the clearest example: it applies every estimator here to the Lalonde/NSW
+benchmark and concludes that none of them supports a causal claim.
 
 ## Citation and archiving
 

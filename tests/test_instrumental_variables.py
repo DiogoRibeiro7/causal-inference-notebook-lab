@@ -72,3 +72,15 @@ def test_instrumental_variables_rejects_invalid_inputs() -> None:
 
     with pytest.raises(ValueError, match="treatment_col and instrument_col must be different."):
         instrumental_variables_ate(data, treatment_col="instrument", instrument_col="instrument")
+
+
+def test_iv_reports_late_not_ate() -> None:
+    """2SLS identifies the complier effect, and the result object must say so.
+
+    Labelling it "ATE" invites the exact misreading the assumptions matrix warns
+    about: the two coincide only under homogeneous effects, which is the
+    assumption an instrument is usually invoked to avoid.
+    """
+    dataset = make_iv_data(n=500, seed=99)
+    result = instrumental_variables_ate(dataset.data)
+    assert result.effect.estimand == "LATE"

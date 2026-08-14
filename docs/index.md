@@ -5,9 +5,13 @@ A notebook-first causal inference lab. Reusable estimators live in
 ground truth and to the Lalonde/NSW benchmark.
 
 The organising idea is that a causal estimate is only as good as the assumptions
-you are willing to defend. Every notebook states them, every estimator documents
-the conditions under which it identifies an effect, and results are reported with
-uncertainty and limitations rather than a single confident number.
+you are willing to defend. Every analysis notebook states them, every estimator
+documents the conditions under which it identifies an effect, and results are
+reported with uncertainty and limitations rather than a single confident number.
+
+That structure is enforced by tests rather than left to good intentions: the
+eight sections below must be present and ordered, the estimand must be named,
+and every result must be interpreted, or CI fails.
 
 !!! warning "This is a lab, not a production causal engine"
     Some estimators are deliberately simplified for clarity. Synthetic examples

@@ -177,7 +177,11 @@ def instrumental_variables_ate(
     effect = EffectEstimate(
         estimate=estimate,
         estimator="instrumental_variables_2sls",
-        estimand="ATE",
+        # Two-stage least squares identifies the effect among compliers -- units
+        # whose treatment responds to the instrument -- not the population
+        # average. The two coincide only under homogeneous effects, which is
+        # exactly the assumption an instrument is usually invoked to avoid.
+        estimand="LATE",
         n_observations=int(len(data)),
     )
 

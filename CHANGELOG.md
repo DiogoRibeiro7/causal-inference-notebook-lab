@@ -10,7 +10,35 @@ Each released version is archived on Zenodo with its own DOI; see the
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `tests/test_notebook_structure.py`, making the documented eight-step workflow
+  a build-time contract: sections present and ordered, every code cell
+  introduced by prose, the estimand named, results interpreted, outputs
+  stripped.
+- `tests/test_custom_models.py`, covering every estimator entry point that
+  accepts a caller-supplied model.
+
+### Changed
+
+- All twelve notebooks rewritten to the workflow standard. Eight had drifted
+  below it and three were a single sentence and a `print`. Each now compares
+  against a baseline, runs diagnostics, quantifies uncertainty, and states what
+  it cannot conclude.
+
+### Fixed
+
+- Estimators accepting a caller-supplied model crashed when given an unfitted
+  scikit-learn ensemble. Ten call sites used `model or Default()`, which
+  evaluates `bool(model)`; an unfitted ensemble raises `AttributeError` from
+  `__len__`. This broke the main reason to supply a model at all — non-linear
+  nuisance functions in double machine learning and meta-learners.
+- `instrumental_variables_ate` reported `estimand="ATE"`. Two-stage least
+  squares identifies the LATE, and the two coincide only under homogeneous
+  effects — the assumption an instrument is usually invoked to avoid.
+- Notebook 11's net-benefit calculation added `true_ite` to outcomes that
+  already contained the effect for treated units, then returned the sum of two
+  group means — a quantity that moves with group size and measures nothing.
 
 ## [0.2.0] - 2026-08-14
 
