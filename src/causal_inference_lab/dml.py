@@ -128,8 +128,10 @@ def double_machine_learning_ate(
         raise ValueError("seed must be an integer.")
     seed = int(seed)
 
-    outcome_base = outcome_model or LinearRegression()
-    treatment_base = treatment_model or LogisticRegression(max_iter=1_000)
+    outcome_base = outcome_model if outcome_model is not None else LinearRegression()
+    treatment_base = (
+        treatment_model if treatment_model is not None else LogisticRegression(max_iter=1_000)
+    )
 
     folds = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
     residual_t: list[float] = []

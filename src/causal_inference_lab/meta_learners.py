@@ -172,7 +172,7 @@ class SMetaLearner(CATEModel):
 
     def __init__(self, model: RegressorMixin | None = None) -> None:
         super().__init__()
-        self.model = model or LinearRegression()
+        self.model = model if model is not None else LinearRegression()
 
     def _features(self, x: np.ndarray, treatment: np.ndarray | None = None) -> np.ndarray:
         """Build S-learner features by appending treatment to each row."""
@@ -228,8 +228,8 @@ class TMetaLearner(CATEModel):
         control_model: RegressorMixin | None = None,
     ) -> None:
         super().__init__()
-        self.treated_model = treated_model or LinearRegression()
-        self.control_model = control_model or LinearRegression()
+        self.treated_model = treated_model if treated_model is not None else LinearRegression()
+        self.control_model = control_model if control_model is not None else LinearRegression()
 
     def fit(
         self, data: pd.DataFrame, covariates: Sequence[str], treatment_col: str, outcome_col: str
@@ -277,10 +277,14 @@ class XMetaLearner(CATEModel):
         effect_model_c: RegressorMixin | None = None,
     ) -> None:
         super().__init__()
-        self.outcome_model_t = outcome_model_t or LinearRegression()
-        self.outcome_model_c = outcome_model_c or LinearRegression()
-        self.effect_model_t = effect_model_t or LinearRegression()
-        self.effect_model_c = effect_model_c or LinearRegression()
+        self.outcome_model_t = (
+            outcome_model_t if outcome_model_t is not None else LinearRegression()
+        )
+        self.outcome_model_c = (
+            outcome_model_c if outcome_model_c is not None else LinearRegression()
+        )
+        self.effect_model_t = effect_model_t if effect_model_t is not None else LinearRegression()
+        self.effect_model_c = effect_model_c if effect_model_c is not None else LinearRegression()
         self.ate_: float | None = None
 
     def fit(

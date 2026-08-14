@@ -209,7 +209,7 @@ def g_computation_ate(
     _validate_binary_treatment(data[treatment_col])
     _validate_non_missing_numeric_outcome(data[outcome_col], "outcome")
 
-    model = outcome_model or LinearRegression()
+    model = outcome_model if outcome_model is not None else LinearRegression()
     features = list(covariates) + [treatment_col]
     model.fit(_as_numpy_frame(data, features), data[outcome_col].to_numpy(dtype=float))
 
@@ -327,8 +327,8 @@ def predict_cate_t_learner(
     if treated_data.empty or control_data.empty:
         raise ValueError("Both treated and control groups are required.")
 
-    treated_model = model_treated or LinearRegression()
-    control_model = model_control or LinearRegression()
+    treated_model = model_treated if model_treated is not None else LinearRegression()
+    control_model = model_control if model_control is not None else LinearRegression()
 
     treated_model.fit(_as_numpy_frame(treated_data, covariates), treated_data[outcome_col])
     control_model.fit(_as_numpy_frame(control_data, covariates), control_data[outcome_col])
