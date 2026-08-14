@@ -1,0 +1,55 @@
+name: Feature or estimator request
+description: Propose a new estimator, diagnostic, notebook, or capability
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project prefers simple, transparent methods over complex ones, and
+        will not add a heavyweight dependency without a clear justification. A
+        proposal that explains *what causal question the addition answers* is
+        far more likely to land than one that names a technique.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - A new estimator
+        - A new diagnostic or sensitivity check
+        - A new notebook or benchmark dataset
+        - Tooling, packaging, or documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What causal question does this answer?
+      description: >
+        What can a user establish with this that they cannot establish today?
+        If it is tooling rather than statistics, describe the workflow problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Identification assumptions and failure modes
+      description: >
+        For an estimator: what must hold for the estimate to be causal, and when
+        does it break? Leave blank for tooling proposals.
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Papers, reference implementations, or textbook treatments.
+
+  - type: checkboxes
+    id: willing
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to open a pull request for this

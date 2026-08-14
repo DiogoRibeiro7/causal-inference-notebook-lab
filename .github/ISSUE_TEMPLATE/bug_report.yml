@@ -1,0 +1,70 @@
+name: Bug report
+description: Something crashes, or an estimator returns a result you believe is wrong
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Two quite different things count as bugs here: code that fails, and code
+        that runs but returns a statistically wrong answer. The second is more
+        serious and harder to spot — if that is what you found, the
+        data-generating process and seed matter more than the traceback.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem is this?
+      options:
+        - Crash or error
+        - Estimator returns a wrong or biased estimate
+        - Notebook fails to execute
+        - Documentation is wrong or misleading
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the full traceback if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+      description: >
+        For a statistical bug, state the true effect and what the estimator
+        returned. "Recovers the true ATE of 2.0 within Monte Carlo error, but
+        returned 3.4" is the useful form.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: >
+        A minimal script, including the seed and the data-generating process.
+        Prefer one of the `make_*` generators so the true effect is known.
+      render: python
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`python -c \"import causal_inference_lab; print(causal_inference_lab.__version__)\"`"
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Python version, OS, and the versions of numpy, pandas, scikit-learn, and statsmodels.
+    validations:
+      required: true
