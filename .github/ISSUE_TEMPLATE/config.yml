@@ -3,6 +3,6 @@ contact_links:
   - name: Security vulnerability
     url: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/security/advisories/new
     about: Report privately through a security advisory, never as a public issue.
-  - name: Question about a method or result
-    url: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/discussions
-    about: Ask about identification, estimand choice, or interpreting a notebook.
+  - name: Documentation
+    url: https://diogoribeiro7.github.io/causal-inference-notebook-lab/assumptions/
+    about: The assumptions matrix answers most questions about what an estimator identifies.
