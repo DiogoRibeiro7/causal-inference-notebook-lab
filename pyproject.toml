@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "causal-inference-notebook-lab"
-version = "0.1.0"
+# Single-sourced from causal_inference_lab.__version__; see [tool.setuptools.dynamic].
+dynamic = ["version"]
 description = "Notebook-first causal inference portfolio project with reusable Python source code."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -20,6 +21,18 @@ keywords = [
     "double-machine-learning",
     "reproducible-research",
 ]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
+]
 dependencies = [
     "numpy>=1.24",
     "pandas>=2.0",
@@ -33,19 +46,45 @@ dependencies = [
 ]
 
 [project.urls]
+Homepage = "https://diogoribeiro7.github.io/causal-inference-notebook-lab/"
+Documentation = "https://diogoribeiro7.github.io/causal-inference-notebook-lab/"
 Repository = "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab"
+Changelog = "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/blob/main/CHANGELOG.md"
+Issues = "https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/issues"
 ORCID = "https://orcid.org/0009-0001-2022-7072"
 
 [project.optional-dependencies]
+# Upper bounds are deliberate. Unpinned tooling is what broke CI silently
+# between June and August 2026: a pandas-stubs release started rejecting a
+# `.loc` form, and a numpy release shipped PEP 695 stubs the pinned mypy target
+# could not parse. Dependabot proposes the bumps; CI proves them.
 dev = [
-    "pytest>=7.4",
-    "ruff>=0.5",
-    "mypy>=1.8",
-    "pandas-stubs>=2.0",
+    "pytest>=7.4,<9",
+    "pytest-cov>=5.0,<8",
+    "ruff>=0.5,<1",
+    "mypy>=1.8,<2",
+    "pandas-stubs>=2.0,<3",
+    "pyyaml>=6.0,<7",
+    "pre-commit>=3.7,<5",
+    "nbconvert>=7.0,<8",
+    "nbformat>=5.9,<6",
+]
+docs = [
+    "mkdocs>=1.6,<2",
+    "mkdocs-material>=9.5,<10",
+    "mkdocstrings[python]>=0.26,<1",
+    "mkdocs-jupyter>=0.25,<1",
+    "pymdown-extensions>=10.8,<11",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "causal_inference_lab.__version__" }
+
+[tool.setuptools.package-data]
+causal_inference_lab = ["py.typed"]
 
 [tool.ruff]
 line-length = 100
@@ -74,3 +113,21 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.coverage.run]
+source = ["causal_inference_lab"]
+branch = true
+
+[tool.coverage.report]
+# 81% with branch coverage on, which is a stricter measure than the 85% the
+# same suite scores line-only: partial branches count as misses. Raise the floor
+# when coverage rises; never lower it to make a red build green.
+fail_under = 80
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
