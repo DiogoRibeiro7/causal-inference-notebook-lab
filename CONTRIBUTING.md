@@ -27,7 +27,7 @@ pre-commit install
 | `make coverage` | Tests with a branch-coverage report and the 80% gate |
 | `make ci` | Lint, typecheck, and test together — what CI runs |
 | `make notebooks` | Execute the three lightweight notebooks in place |
-| `make notebooks-all` | Execute all twelve, including the benchmark |
+| `make notebooks-all` | Execute all thirteen, including both benchmarks |
 | `make docs` | Serve the documentation site locally |
 | `make docs-build` | Build the site strictly, failing on warnings |
 

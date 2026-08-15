@@ -42,6 +42,7 @@ lab:
 
 data:
 	python scripts/prepare_lalonde_job_training_dataset.py
+	python scripts/prepare_ihdp_dataset.py
 
 notebooks:
 	for nb in $(NOTEBOOKS_FAST); do \

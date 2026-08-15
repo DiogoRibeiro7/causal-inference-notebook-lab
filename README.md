@@ -58,9 +58,11 @@ causal-inference-notebook-lab/
 │   ├── 08_regression_discontinuity.ipynb
 │   ├── 09_synthetic_control.ipynb
 │   ├── 10_lalonde_job_training.ipynb
-│   └── 11_policy_targeting.ipynb
+│   ├── 11_policy_targeting.ipynb
+│   └── 12_ihdp_benchmark.ipynb
 ├── scripts/
 │   ├── prepare_lalonde_job_training_dataset.py
+│   ├── prepare_ihdp_dataset.py
 │   └── build_docs_notebooks.py
 ├── src/
 │   └── causal_inference_lab/       # estimators, diagnostics, generators
@@ -77,7 +79,7 @@ causal-inference-notebook-lab/
 ├── .github/workflows/
 │   ├── ci.yml                      # lint, typecheck, tests, fast notebooks
 │   ├── docs.yml                    # build and deploy to GitHub Pages
-│   └── notebooks-nightly.yml       # execute all twelve, nightly
+│   └── notebooks-nightly.yml       # execute all thirteen, nightly
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 ├── mkdocs.yml
@@ -116,7 +118,7 @@ make test           # unit tests
 make coverage       # tests with branch coverage, enforcing the 80% floor
 make ci             # lint, typecheck, and tests together
 make notebooks      # execute the lightweight notebooks (00, 01, 02)
-make notebooks-all  # execute all twelve
+make notebooks-all  # execute all thirteen
 make docs           # serve the documentation site locally
 ```
 

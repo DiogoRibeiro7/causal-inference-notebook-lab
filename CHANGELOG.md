@@ -10,7 +10,34 @@ Each released version is archived on Zenodo with its own DOI; see the
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- **IHDP semi-synthetic benchmark** (notebook 12) and
+  `scripts/prepare_ihdp_dataset.py`, which downloads ten replications with a
+  processing manifest marking the ground-truth columns an estimator may not
+  read.
+
+  IHDP complements Lalonde by having known individual effects, so estimators can
+  be scored rather than compared. The result is uncomfortable and is the point of
+  the notebook: **the unadjusted difference in means is the most accurate
+  estimator on this benchmark**, beating AIPW in 8 of 10 replications, in a
+  setting where conditional ignorability holds by construction. Adjustment is
+  not free, and nothing in an analysis's output reveals whether it helped.
+
+  The notebook also shows a single pathological replication reordering the
+  method ranking depending on whether you report the mean or the median, and the
+  linear S-learner again reporting a CATE standard deviation of exactly 0.000 —
+  this time on real covariates.
+- `tests/test_prepare_ihdp.py`, pinning the positional column order of the
+  published CSVs. Mislabelling it would produce a dataset that loads cleanly and
+  means something different.
+
+### Changed
+
+- `make data` now prepares both benchmarks.
+- `ROADMAP.md` rewritten to reflect actual status. The "definition of done" is
+  met as of v0.3.0, and several of its criteria are now enforced by tests rather
+  than asserted.
 
 ## [0.3.0] - 2026-08-15
 
