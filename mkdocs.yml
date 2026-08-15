@@ -146,6 +146,7 @@ nav:
       - notebooks/09_synthetic_control.ipynb
       - notebooks/10_lalonde_job_training.ipynb
       - notebooks/11_policy_targeting.ipynb
+      - notebooks/12_ihdp_benchmark.ipynb
   - Project:
       - Contributing: about/contributing.md
       - Changelog: about/changelog.md

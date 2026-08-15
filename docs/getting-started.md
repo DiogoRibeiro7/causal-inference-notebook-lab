@@ -37,7 +37,7 @@ estimators behave: each one checks that a known synthetic effect is recovered.
 
 ```bash
 make notebooks       # notebooks 00-02, fast
-make notebooks-all   # all twelve
+make notebooks-all   # all thirteen
 ```
 
 Notebooks are committed with their outputs, so a fresh clone — and the GitHub
