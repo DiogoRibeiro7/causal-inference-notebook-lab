@@ -31,12 +31,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev,docs]"
 
-      - name: Prepare benchmark dataset
-        run: make data
-
       - name: Build site
-        # Executes all twelve notebooks into docs/notebooks, then builds
-        # strictly so a broken link or an orphan page fails the job.
+        # Notebooks are committed with their outputs, so this stages them as-is
+        # and the site shows exactly what the repository shows. No notebook
+        # execution, and therefore no Lalonde download. The nightly workflow is
+        # what proves the notebooks still run.
+        #
+        # Strict mode makes a broken link or an orphan page fail the job.
         run: make docs-build
 
       - name: Upload artifact

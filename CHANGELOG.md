@@ -10,12 +10,26 @@ Each released version is archived on Zenodo with its own DOI; see the
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.3.0] - 2026-08-15
+
+The notebooks release. Every analysis was rewritten to the workflow the
+repository had always documented but never enforced, and three bugs surfaced in
+the process — two of them in the library, found by trying to write analyses that
+used it.
+
+**Behaviour changes worth noting before upgrading:** `instrumental_variables_ate`
+now reports `estimand="LATE"` rather than `"ATE"`, so code branching on that
+string behaves differently; and calls that previously raised `AttributeError`
+when passed an ensemble model now succeed.
+
 ### Added
 
 - `tests/test_notebook_structure.py`, making the documented eight-step workflow
   a build-time contract: sections present and ordered, every code cell
-  introduced by prose, the estimand named, results interpreted, outputs
-  stripped.
+  introduced by prose, the estimand named, results interpreted, and the
+  notebook executed cleanly from a fresh kernel.
 - `tests/test_custom_models.py`, covering every estimator entry point that
   accepts a caller-supplied model.
 
@@ -25,6 +39,14 @@ Each released version is archived on Zenodo with its own DOI; see the
   below it and three were a single sentence and a `print`. Each now compares
   against a baseline, runs diagnostics, quantifies uncertainty, and states what
   it cannot conclude.
+- **Notebooks are now committed with their outputs**, so results are readable on
+  GitHub without cloning. The `nbstripout` pre-commit hook is removed, and the
+  structure tests instead assert every cell was executed, that execution counts
+  run 1..N from a fresh kernel, and that no traceback was committed. All twelve
+  come to 248 KB, since the outputs are text tables rather than figures.
+- The documentation build copies the committed outputs rather than re-executing
+  the notebooks, which removes a network dependency and cuts the docs job from
+  roughly four minutes to seconds. `--execute` still forces a re-run.
 
 ### Fixed
 
@@ -110,6 +132,7 @@ is [10.5281/zenodo.21936501](https://doi.org/10.5281/zenodo.21936501).
 - The mypy `python_version` pin, which made the 3.12 CI leg fail inside the
   numpy stubs before reaching project code.
 
-[Unreleased]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/releases/tag/v0.1.0

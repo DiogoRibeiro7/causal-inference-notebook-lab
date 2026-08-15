@@ -1,22 +1,23 @@
-"""Execute the notebooks into the documentation tree.
+"""Stage the notebooks into the documentation tree.
 
-Notebooks are committed without outputs, so the documentation site would render
-code and prose with no figures unless they are executed at build time.
+Notebooks are committed with their outputs, so by default this just copies them
+and the site renders exactly what is in the repository — the same numbers a
+reader sees on GitHub. That keeps the documentation build fast and free of any
+network dependency.
 
-Execution happens with the working directory set to ``notebooks/``, because each
-notebook locates the project with::
+Pass ``--execute`` to re-run them first. Execution uses ``notebooks/`` as the
+kernel's working directory, because each notebook locates the project with::
 
     PROJECT_ROOT = Path.cwd().parent if Path.cwd().name == "notebooks" else Path.cwd()
 
 Executing a *copy* under ``docs/notebooks`` would satisfy that check while
 resolving the root to ``docs/``, where ``src`` and ``scripts`` do not exist. So
-we read from ``notebooks/``, execute with that directory as the kernel's cwd,
-and write the executed copy into the docs tree. The source notebooks are never
-modified, and the destination is gitignored: it is a build artifact.
+we read from ``notebooks/``, execute with that directory as the cwd, and write
+the result into the docs tree, leaving the sources untouched.
 
-Notebook 10 needs the Lalonde benchmark, which is downloaded on first use by
-``scripts/prepare_lalonde_job_training_dataset.py``. Run that first, or let the
-notebook fetch it.
+Notebook 10 needs the Lalonde benchmark, downloaded by
+``scripts/prepare_lalonde_job_training_dataset.py``. Run that first when
+executing.
 """
 
 from __future__ import annotations
@@ -37,16 +38,16 @@ def build(
     source: Path = SOURCE,
     destination: Path = DESTINATION,
     timeout: int = DEFAULT_TIMEOUT,
-    execute: bool = True,
+    execute: bool = False,
 ) -> list[Path]:
-    """Execute each notebook and write the result into the docs tree.
+    """Stage each notebook into the docs tree, optionally re-executing it.
 
     Args:
         source: Directory holding the canonical notebooks.
         destination: Directory inside the MkDocs tree to write into.
         timeout: Per-cell execution timeout in seconds.
-        execute: When False, copy without executing. Useful for a fast
-            documentation preview while editing prose.
+        execute: When True, re-run the notebooks instead of copying their
+            committed outputs.
 
     Returns:
         The notebook paths written, sorted by name.
@@ -101,9 +102,9 @@ def main(argv: list[str] | None = None) -> int:
     """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
-        "--no-execute",
+        "--execute",
         action="store_true",
-        help="Copy without executing, for a fast prose-only preview.",
+        help="Re-run the notebooks instead of copying their committed outputs.",
     )
     parser.add_argument(
         "--timeout",
@@ -113,8 +114,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    written = build(timeout=args.timeout, execute=not args.no_execute)
-    verb = "Copied" if args.no_execute else "Executed"
+    written = build(timeout=args.timeout, execute=args.execute)
+    verb = "Executed" if args.execute else "Copied"
     print(f"{verb} {len(written)} notebooks into {DESTINATION.relative_to(REPO_ROOT)}")
     return 0
 

@@ -13,6 +13,11 @@ shipping to the documentation site.
 
 The rules are deliberately about *presence*, not quality. No test can tell you
 that an assumptions section is honest. It can tell you that one exists.
+
+Notebooks are committed with their outputs so results are readable on GitHub
+without cloning anything. That makes execution state part of the contract: the
+tests below check every cell ran, that it ran in order from a fresh kernel, and
+that no traceback was committed.
 """
 
 from __future__ import annotations
@@ -117,16 +122,60 @@ def test_every_code_cell_is_introduced(notebook: Path) -> None:
 
 
 @pytest.mark.parametrize("notebook", ALL_NOTEBOOKS, ids=_id)
-def test_outputs_are_stripped(notebook: Path) -> None:
-    """Notebooks are committed without outputs; nbstripout enforces it on commit."""
-    with_outputs = [
+def test_notebook_was_executed(notebook: Path) -> None:
+    """Notebooks are committed *with* their outputs, so results read on GitHub.
+
+    A committed notebook whose cells were never run shows code and prose but no
+    numbers, which defeats the point of publishing it. Regenerate with
+    ``make notebooks-all``.
+    """
+    code_cells = [c for c in _cells(notebook) if c["cell_type"] == "code"]
+    assert code_cells, f"{notebook.name} has no code cells"
+
+    unexecuted = [
+        index for index, cell in enumerate(code_cells) if cell.get("execution_count") is None
+    ]
+    assert not unexecuted, (
+        f"{notebook.name}: code cells {unexecuted} were never executed. Run `make notebooks-all`."
+    )
+
+
+@pytest.mark.parametrize("notebook", ALL_NOTEBOOKS, ids=_id)
+def test_notebook_was_run_top_to_bottom(notebook: Path) -> None:
+    """Execution counts must be 1..N in order.
+
+    Out-of-order counts mean the committed outputs came from cells run in some
+    other sequence, so the numbers on the page need not follow from the code
+    above them. That is worse than no outputs at all, because it looks fine.
+    """
+    counts = [
+        cell.get("execution_count") for cell in _cells(notebook) if cell["cell_type"] == "code"
+    ]
+    assert counts == list(range(1, len(counts) + 1)), (
+        f"{notebook.name}: execution counts are {counts}, expected "
+        f"{list(range(1, len(counts) + 1))}. Re-run the notebook from a fresh kernel."
+    )
+
+
+@pytest.mark.parametrize("notebook", ANALYSIS_NOTEBOOKS, ids=_id)
+def test_notebook_produced_output(notebook: Path) -> None:
+    """At least some cells must have produced visible output."""
+    with_output = [
+        cell for cell in _cells(notebook) if cell["cell_type"] == "code" and cell.get("outputs")
+    ]
+    assert with_output, f"{notebook.name} produced no output at all"
+
+
+@pytest.mark.parametrize("notebook", ALL_NOTEBOOKS, ids=_id)
+def test_no_error_outputs(notebook: Path) -> None:
+    """A committed notebook must not carry a traceback."""
+    failed = [
         index
         for index, cell in enumerate(_cells(notebook))
-        if cell["cell_type"] == "code" and cell.get("outputs")
+        for output in cell.get("outputs", [])
+        if output.get("output_type") == "error"
     ]
-    assert not with_outputs, (
-        f"{notebook.name}: cells at {with_outputs} carry outputs. Run `pre-commit run nbstripout`."
-    )
+    assert not failed, f"{notebook.name}: cells at {failed} committed an error output"
 
 
 @pytest.mark.parametrize("notebook", ANALYSIS_NOTEBOOKS, ids=_id)
