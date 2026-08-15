@@ -25,6 +25,14 @@ Each released version is archived on Zenodo with its own DOI; see the
   below it and three were a single sentence and a `print`. Each now compares
   against a baseline, runs diagnostics, quantifies uncertainty, and states what
   it cannot conclude.
+- **Notebooks are now committed with their outputs**, so results are readable on
+  GitHub without cloning. The `nbstripout` pre-commit hook is removed, and the
+  structure tests instead assert every cell was executed, that execution counts
+  run 1..N from a fresh kernel, and that no traceback was committed. All twelve
+  come to 248 KB, since the outputs are text tables rather than figures.
+- The documentation build copies the committed outputs rather than re-executing
+  the notebooks, which removes a network dependency and cuts the docs job from
+  roughly four minutes to seconds. `--execute` still forces a re-run.
 
 ### Fixed
 

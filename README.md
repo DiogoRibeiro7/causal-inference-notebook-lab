@@ -120,9 +120,13 @@ make notebooks-all  # execute all twelve
 make docs           # serve the documentation site locally
 ```
 
-`pre-commit install` wires ruff, mypy, and notebook output stripping into your
+`pre-commit install` wires ruff, mypy, and file hygiene checks into your
 commits. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow and the
 definition of done for a new estimator.
+
+Notebooks are committed **with their outputs**, so every result is readable
+directly on GitHub — no clone, no kernel. Re-run with `make notebooks-all` after
+changing one; CI verifies each was executed cleanly and in order.
 
 ## Benchmark data preparation
 

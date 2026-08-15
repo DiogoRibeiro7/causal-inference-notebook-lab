@@ -40,9 +40,11 @@ make notebooks       # notebooks 00-02, fast
 make notebooks-all   # all twelve
 ```
 
-Notebooks are stored without outputs, so a fresh clone shows code and narrative
-but no figures until you execute them. `make notebooks` writes outputs in place;
-do not commit them — the `nbstripout` pre-commit hook strips them again.
+Notebooks are committed with their outputs, so a fresh clone — and the GitHub
+web view — already shows every result. Re-run them when you change one:
+`make notebooks-all` writes the outputs in place, and the executed file is what
+you commit. CI checks that each notebook ran cleanly, in order, from a fresh
+kernel.
 
 ## The benchmark dataset
 
