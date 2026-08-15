@@ -14,6 +14,8 @@ Nothing yet.
 
 ## [0.3.0] - 2026-08-15
 
+This version is [10.5281/zenodo.21959303](https://doi.org/10.5281/zenodo.21959303).
+
 The notebooks release. Every analysis was rewritten to the workflow the
 repository had always documented but never enforced, and three bugs surfaced in
 the process — two of them in the library, found by trying to write analyses that
