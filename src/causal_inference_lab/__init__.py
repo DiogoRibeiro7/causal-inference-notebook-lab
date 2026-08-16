@@ -2,7 +2,7 @@
 
 # Single source of the version. pyproject.toml reads this attribute, and
 # tests/test_metadata.py asserts CITATION.cff and .zenodo.json agree with it.
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from causal_inference_lab.data_generators import (
     SyntheticDataset,

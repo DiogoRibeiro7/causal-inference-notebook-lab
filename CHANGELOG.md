@@ -10,6 +10,15 @@ Each released version is archived on Zenodo with its own DOI; see the
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.4.0] - 2026-08-16
+
+Two additions, both closing gaps the roadmap had open: a second benchmark
+dataset, and the fairness analysis notebook 11 had promised and not delivered.
+
+Additive only — no existing signature or behaviour changes.
+
 ### Added
 
 - **IHDP semi-synthetic benchmark** (notebook 12) and
@@ -172,7 +181,8 @@ is [10.5281/zenodo.21936501](https://doi.org/10.5281/zenodo.21936501).
 - The mypy `python_version` pin, which made the 3.12 CI leg fail inside the
   numpy stubs before reaching project code.
 
-[Unreleased]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DiogoRibeiro7/causal-inference-notebook-lab/releases/tag/v0.1.0
