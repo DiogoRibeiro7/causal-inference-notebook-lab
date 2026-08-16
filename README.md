@@ -210,6 +210,7 @@ Two DOIs exist. The **concept DOI** always resolves to the newest release and is
 to cite when the exact version does not matter:
 
 - Concept DOI: [10.5281/zenodo.21936500](https://doi.org/10.5281/zenodo.21936500)
+- v0.4.0: [10.5281/zenodo.21963467](https://doi.org/10.5281/zenodo.21963467)
 - v0.3.0: [10.5281/zenodo.21959303](https://doi.org/10.5281/zenodo.21959303)
 - v0.2.0: [10.5281/zenodo.21939879](https://doi.org/10.5281/zenodo.21939879)
 - v0.1.0: [10.5281/zenodo.21936501](https://doi.org/10.5281/zenodo.21936501)
@@ -220,8 +221,8 @@ For reproduction, cite the specific version and commit used:
 @software{ribeiro_causal_inference_notebook_lab,
   author  = {Ribeiro, Diogo},
   title   = {Causal Inference Notebook Lab},
-  version = {0.3.0},
-  doi     = {10.5281/zenodo.21959303},
+  version = {0.4.0},
+  doi     = {10.5281/zenodo.21963467},
   url     = {https://github.com/DiogoRibeiro7/causal-inference-notebook-lab}
 }
 ```
