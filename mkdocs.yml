@@ -132,6 +132,7 @@ nav:
       - Uncertainty: api/uncertainty.md
       - Sensitivity: api/sensitivity.md
       - Reporting: api/reporting.md
+      - Fairness: api/fairness.md
       - Plotting: api/plotting.md
   - Notebooks:
       - notebooks/00_project_overview.ipynb
@@ -147,6 +148,7 @@ nav:
       - notebooks/10_lalonde_job_training.ipynb
       - notebooks/11_policy_targeting.ipynb
       - notebooks/12_ihdp_benchmark.ipynb
+      - notebooks/13_fairness_aware_targeting.ipynb
   - Project:
       - Contributing: about/contributing.md
       - Changelog: about/changelog.md

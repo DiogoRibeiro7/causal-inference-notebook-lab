@@ -59,7 +59,8 @@ causal-inference-notebook-lab/
 │   ├── 09_synthetic_control.ipynb
 │   ├── 10_lalonde_job_training.ipynb
 │   ├── 11_policy_targeting.ipynb
-│   └── 12_ihdp_benchmark.ipynb
+│   ├── 12_ihdp_benchmark.ipynb
+│   └── 13_fairness_aware_targeting.ipynb
 ├── scripts/
 │   ├── prepare_lalonde_job_training_dataset.py
 │   ├── prepare_ihdp_dataset.py

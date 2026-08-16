@@ -26,6 +26,7 @@ use these annotations rather than falling back to `Any`.
 | Check overlap and balance | [Diagnostics](diagnostics.md) |
 | Put an interval on an estimate | [Uncertainty](uncertainty.md) |
 | Probe unmeasured confounding | [Sensitivity](sensitivity.md) |
+| Audit who a policy actually treats | [Fairness](fairness.md) |
 | Write up a defensible result | [Reporting](reporting.md) |
 | Plot diagnostics or results | [Plotting](plotting.md) |
 

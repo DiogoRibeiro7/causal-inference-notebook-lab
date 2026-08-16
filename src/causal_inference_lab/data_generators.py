@@ -356,3 +356,99 @@ def make_synthetic_control_data(
         true_ate=effect,
         description="Panel data with one treated unit and many donor units for synthetic control.",
     )
+
+
+def make_service_allocation_population(
+    n: int = 6_000,
+    group_share: float = 0.3,
+    effect_gap: float = 0.0,
+    seed: int = 31,
+) -> SyntheticDataset:
+    """Generate a targeting population where one group is measured less well.
+
+    Two groups receive the same distribution of underlying need, and by default
+    the same distribution of treatment effects. What differs is how well that
+    need is *measured*: group B accumulates fewer recorded visits at the same
+    severity, and its screening score is substantially noisier.
+
+    That is the mechanism worth studying. Ranking by estimated benefit is not
+    neutral with respect to a group whose benefit is estimated less precisely,
+    even when its true benefit is identical -- the ranking reflects measurement
+    quality as well as need. Which direction the disparity runs depends on which
+    signals the model leans on, which is itself a reason to measure allocation
+    rather than assume a benefit-based rule is fair.
+
+    Args:
+        n: Number of individuals.
+        group_share: Share of the population in group B.
+        effect_gap: Additional true effect for group A. Zero by default, so any
+            allocation disparity comes from measurement rather than from a real
+            difference in benefit. Set it positive to study the case where the
+            groups genuinely differ.
+        seed: Random seed.
+
+    Returns:
+        SyntheticDataset with ``group``, observable covariates, and
+        ``true_ite``.
+
+    Raises:
+        ValueError: If ``group_share`` is not strictly between 0 and 1.
+    """
+
+    _validate_positive_int(n, "n")
+    _validate_seed(seed)
+    if not isinstance(group_share, numbers.Real) or isinstance(group_share, bool):
+        raise TypeError("group_share must be a real number.")
+    if not 0.0 < float(group_share) < 1.0:
+        raise ValueError("group_share must be strictly between 0 and 1.")
+    if not isinstance(effect_gap, numbers.Real) or isinstance(effect_gap, bool):
+        raise TypeError("effect_gap must be a real number.")
+
+    rng = np.random.default_rng(seed)
+
+    group = rng.binomial(1, float(group_share), n)  # 1 marks group B
+    age = rng.normal(45.0, 14.0, n)
+
+    # Need is distributed identically in both groups.
+    severity = rng.normal(0.0, 1.0, n)
+
+    # Group B records fewer visits at the same severity: an access barrier, not
+    # less need.
+    visit_rate = np.exp(0.4 + 0.55 * severity - 0.3 * group)
+    prior_visits = rng.poisson(visit_rate).astype(float)
+
+    # And its screening is noisier, so severity is observed less precisely.
+    screening_noise = rng.normal(0.0, 1.0, n) * (0.3 + 2.0 * group)
+    screening_score = severity + screening_noise
+
+    # True benefit depends on severity alone unless effect_gap is set.
+    true_ite = 0.8 + 1.4 * _sigmoid(severity) + float(effect_gap) * (1 - group)
+
+    propensity = _sigmoid(-0.5 + 0.35 * screening_score + 0.05 * prior_visits)
+    treatment = rng.binomial(1, propensity)
+
+    baseline = 4.0 + 0.02 * age + 0.9 * severity + 0.25 * prior_visits
+    outcome = baseline + true_ite * treatment + rng.normal(0.0, 1.0, n)
+
+    data = pd.DataFrame(
+        {
+            "age": age,
+            "screening_score": screening_score,
+            "prior_visits": prior_visits,
+            "group": group,
+            "treatment": treatment,
+            "outcome": outcome,
+            "true_ite": true_ite,
+            "true_severity": severity,
+            "true_propensity": propensity,
+        }
+    )
+
+    return SyntheticDataset(
+        data=data,
+        true_ate=float(np.mean(true_ite)),
+        description=(
+            "Targeting population where group B has equal need but weaker "
+            "measurement of it, so estimated benefit understates true benefit."
+        ),
+    )

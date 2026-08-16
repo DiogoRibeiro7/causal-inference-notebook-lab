@@ -78,6 +78,21 @@ The pattern is consistent: diagnostics can falsify an analysis, never validate
 one. Balance on observables is evidence that adjustment worked, not evidence
 that ignorability holds.
 
+## Allocation
+
+Targeting adds an assumption that no estimator states, because it is not a
+causal one.
+
+| Tool | Checks | Does not check |
+|---|---|---|
+| `fairness` — `allocation_table`, `allocation_disparity` | What share of each group a policy actually treats | Whether that allocation is just |
+| `fairness` — `parity_constrained_selection` | What equal allocation rates cost in total benefit | Whether demographic parity is the right criterion |
+
+A ranking built from estimated benefit uses no protected attribute, and is still
+not neutral with respect to one: estimated benefit reflects measurement quality
+as well as need. Notebook 13 shows allocation diverging by five percentage
+points between groups whose true benefit is identical.
+
 ## Reporting
 
 `CausalReport` requires question, estimand, identification assumptions,
