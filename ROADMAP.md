@@ -118,10 +118,11 @@ half is not.
       universal treatment destroys value while targeted treatment does not)
 - [ ] policy learning
 - [ ] counterfactual simulation
-- [ ] fairness-aware treatment allocation — currently named as a limitation in
-      notebook 11 rather than analysed
+- [x] fairness-aware treatment allocation (notebook 13), with allocation
+      auditing and parity-constrained targeting in `fairness.py`
 
-**Outcome:** substantially met.
+**Outcome:** substantially met — policy learning and counterfactual simulation
+remain.
 
 ## Stage 6 — Publication-quality communication
 

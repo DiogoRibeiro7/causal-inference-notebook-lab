@@ -31,6 +31,17 @@ Each released version is archived on Zenodo with its own DOI; see the
 - `tests/test_prepare_ihdp.py`, pinning the positional column order of the
   published CSVs. Mislabelling it would produce a dataset that loads cleanly and
   means something different.
+- **Fairness-aware targeting** (notebook 13), `causal_inference_lab.fairness`,
+  and `make_service_allocation_population`. Notebook 11 stated that targeting
+  "can amplify bias" and left it there; this measures it.
+
+  `allocation_table` and `allocation_disparity` report what share of each group
+  a policy treats; `parity_constrained_selection` builds an equal-rate
+  alternative so the trade-off can be priced. With identical true benefit across
+  groups, the benefit-ranked policy still allocates unevenly — 18.5% against
+  23.4% — and equalising it costs nothing. Where benefit genuinely differs,
+  parity costs 2.3% of total gain, though a bootstrap shows that figure is not
+  distinguishable from zero on this sample.
 
 ### Changed
 

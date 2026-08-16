@@ -10,6 +10,7 @@ from causal_inference_lab.data_generators import (
     make_did_panel,
     make_heterogeneous_treatment_data,
     make_iv_data,
+    make_service_allocation_population,
 )
 from causal_inference_lab.difference_in_differences import (
     DifferenceInDifferencesResult,
@@ -21,6 +22,12 @@ from causal_inference_lab.estimators import (
     difference_in_means,
     g_computation_ate,
     ipw_ate,
+)
+from causal_inference_lab.fairness import (
+    allocation_disparity,
+    allocation_table,
+    parity_constrained_selection,
+    top_k_selection,
 )
 from causal_inference_lab.instrumental_variables import IVResult, instrumental_variables_ate
 from causal_inference_lab.matching import (
@@ -51,6 +58,11 @@ __all__ = [
     "make_heterogeneous_treatment_data",
     "make_did_panel",
     "make_iv_data",
+    "make_service_allocation_population",
+    "allocation_table",
+    "allocation_disparity",
+    "parity_constrained_selection",
+    "top_k_selection",
     "difference_in_means",
     "g_computation_ate",
     "ipw_ate",
