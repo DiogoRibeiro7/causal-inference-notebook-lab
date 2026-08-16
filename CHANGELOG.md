@@ -14,6 +14,8 @@ Nothing yet.
 
 ## [0.4.0] - 2026-08-16
 
+This version is [10.5281/zenodo.21963467](https://doi.org/10.5281/zenodo.21963467).
+
 Two additions, both closing gaps the roadmap had open: a second benchmark
 dataset, and the fairness analysis notebook 11 had promised and not delivered.
 
