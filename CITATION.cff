@@ -8,8 +8,8 @@ authors:
     orcid: "https://orcid.org/0009-0001-2022-7072"
     email: dfr@esmad.ipp.pt
     affiliation: "ESMAD - Escola Superior de Media Arte e Design, Instituto Politecnico do Porto"
-version: "0.3.0"
-date-released: "2026-08-15"
+version: "0.4.0"
+date-released: "2026-08-16"
 license: MIT
 doi: "10.5281/zenodo.21936500"
 identifiers:
